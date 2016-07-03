@@ -58,6 +58,7 @@
   <ItemGroup>
     <Compile Include="ObjectExplorerExtender.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SchemaFolderTreeNode.cs" />
     <Compile Include="SsmsSchemaFoldersPackage.cs" />
   </ItemGroup>
   <ItemGroup>
