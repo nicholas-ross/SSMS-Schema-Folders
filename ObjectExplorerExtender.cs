@@ -1,24 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
-using System.Reflection;
+﻿using Microsoft.SqlServer.Management.Sdk.Sfc;
 using Microsoft.SqlServer.Management.UI.VSIntegration.ObjectExplorer;
-using Microsoft.SqlServer.Management.Sdk.Sfc;
+using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Reflection;
+using System.Windows.Forms;
 
-namespace Ssms2012Extender
+namespace SsmsSchemaFolders
 {
     /// <summary>
     /// Used to organize Databases and Tables in Object Explorer into groups
     /// </summary>
     public class ObjectExplorerExtender
     {
-        /// <summary>
-        /// Default text displayed if column has no extended description property in DB
-        /// <value>Description not found in DB</value>
-        /// </summary>
-        public const string DescriptionNotFound = "Description not found in DB";
 
         //settings
         public bool AppendDot { get; set; }
@@ -35,33 +29,14 @@ namespace Ssms2012Extender
             UseObjectIcon = true;
             CloneParentNode = true;
         }
-         
-        /// <summary>
-        /// Gets node name from underlying type of tree node view
-        /// </summary>
-        /// <param name="node"></param>
-        /// <returns></returns>
-        public   string NodeName(TreeNode node)
-        {
-            Type t = node.GetType();
-            PropertyInfo property = t.GetProperty("NodeName", typeof(string));
 
-            if (property != null)
-            {
-                return Convert.ToString(property.GetValue(node, null));
-            }
-            else
-            {
-                return string.Empty;
-            }
-        }
 
         /// <summary>
         /// Gets node information from underlying type of tree node view
         /// </summary>
         /// <param name="node"></param>
         /// <returns></returns>
-        public   INodeInformation GetNodeInformation(TreeNode node)
+        public INodeInformation GetNodeInformation(TreeNode node)
         {
             INodeInformation service = null;
             IServiceProvider provider = node as IServiceProvider;
@@ -79,7 +54,7 @@ namespace Ssms2012Extender
         /// </summary>
         /// <param name="node"></param>
         /// <returns></returns>
-        public   Urn GetNodeUrn(TreeNode node)
+        private Urn GetNodeUrn(TreeNode node)
         {
             INodeInformation service = GetNodeInformation(node);
             return GetServiceUrn(service);
@@ -90,80 +65,14 @@ namespace Ssms2012Extender
         /// </summary>
         /// <param name="service">INodeInformation of object explorer item</param>
         /// <returns>Urn of node</returns>
-        public   Urn GetServiceUrn(INodeInformation service)
+        private Urn GetServiceUrn(INodeInformation service)
         {
             Urn urn = null;
             if (service != null)
                 urn = new Urn(service.Context);
             return urn;
         }
-
-        /// <summary>
-        /// Gets connection string from tree node view item
-        /// </summary>
-        /// <param name="node">TreeNode view item</param>
-        /// <returns>Connection string of the tree node item</returns>
-        public   string GetConnectionString(TreeNode node)
-        {
-            INodeInformation service = GetNodeInformation(node);
-            Urn urn = GetServiceUrn(service);
-
-            //System.Diagnostics.Debug.Print(service.Connection.ConnectionString);
-
-            SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(service.Connection.ConnectionString);
-
-            builder.InitialCatalog = urn.GetAttribute("Name", "Database");
-
-            return builder.ToString();
-        }
-
-        /// <summary>
-        /// Gets urn path from tree node view
-        /// </summary>
-        /// <param name="node">TreeNode item</param>
-        /// <returns>urn path of the object explorer node from tree node view</returns>
-        public   string GetNodeUrnPath(TreeNode node)
-        {
-            string urnPath = string.Empty;
-            INodeInformation service = GetNodeInformation(node);
-            if (service != null)
-                urnPath = service.UrnPath;
-            return urnPath;
-        }
-
-        /// <summary>
-        /// Gets context string of node
-        /// </summary>
-        /// <param name="node">TreeNode item from view</param>
-        /// <returns>Context path</returns>
-        public   string GetNodeContext(TreeNode node)
-        {
-            INodeInformation ni = GetNodeInformation(node);
-            if (ni != null)
-                return ni.Context;
-            return string.Empty;
-        }
-
-        /// <summary>
-        /// Sets the childrenEnumerated field for a node
-        /// </summary>
-        /// <param name="node">The node.</param>
-        /// <param name="enumerated">if set to <c>true</c> [enumerated].</param>
-        /// <remarks>
-        /// This is to suppress an error when SSMS assumes the nodes we add are HierarchyTreeNodes as opposed to 
-        /// bog standard TreeNodes.
-        /// </remarks>
-        public   void ChildrenEnumerated(TreeNode node, bool enumerated)
-        {
-            Type t = node.GetType();
-            FieldInfo field = t.GetField("childrenEnumerated", BindingFlags.NonPublic | BindingFlags.Instance);
-
-            if (field != null)
-            {
-                field.SetValue(node, enumerated);
-            }
-        }
-
+        
 
         /// <summary>
         /// Create schema nodes and move tables under its schema node, functions and stored procedures
@@ -173,8 +82,8 @@ namespace Ssms2012Extender
         /// <param name="subItemImage">Image for subnodes, if empty - current image will be used</param>
         public void ReorganizeNodes(TreeNode node, string imageName, string subItemImage)
         {
-            List<KeyValuePair<string, List<TreeNode>>> nodesToMove = new List<KeyValuePair<string, List<TreeNode>>>();
-            List<KeyValuePair<string, TreeNode>> createNodes = new List<KeyValuePair<string, TreeNode>>();
+            var nodesToMove = new List<KeyValuePair<string, List<TreeNode>>>();
+            var createNodes = new List<KeyValuePair<string, TreeNode>>();
 
             for (int i = node.Nodes.Count - 1; i > -1; i--)
             {
@@ -184,16 +93,11 @@ namespace Ssms2012Extender
                     continue;
                 //MessageBox.Show(rn.Type);
                 string schema = rn.GetAttribute("Schema");
-                //string schema = rn.GetAttribute("Schema", "Table");
-                //if (string.IsNullOrEmpty(schema))
-                //    schema = rn.GetAttribute("Schema", "StoredProcedure");
-                //if (string.IsNullOrEmpty(schema))
-                //    schema = rn.GetAttribute("Schema", "UserDefinedFunction");
                 if (string.IsNullOrEmpty(schema))
                     continue;
 
-                KeyValuePair<string, TreeNode> kvpCreateNd = new KeyValuePair<string, TreeNode>(schema, null);
-                KeyValuePair<string, List<TreeNode>> kvpNodesToMove = new KeyValuePair<string, List<TreeNode>>(schema, new List<TreeNode>());
+                var kvpCreateNd = new KeyValuePair<string, TreeNode>(schema, null);
+                var kvpNodesToMove = new KeyValuePair<string, List<TreeNode>>(schema, new List<TreeNode>());
                 kvpNodesToMove.Value.Add(tn);
 
                 if (!createNodes.Contains(kvpCreateNd))
@@ -202,54 +106,9 @@ namespace Ssms2012Extender
                     nodesToMove.Add(kvpNodesToMove);
             }
 
-           DoReorganization(node, nodesToMove, createNodes, imageName, subItemImage);
-        }
-
-        /// <summary>
-        /// Creates new DB Group folders and move DB under them
-        /// </summary>
-        /// <param name="node">Server/DatabaseFolder node</param>
-        /// <param name="imageName">folder icon</param>
-        /// <param name="subItemImage">database icon</param>
-        public void ReorganizeDbNodes(TreeNode node, string imageName, string subItemImage, Dictionary<string, Dictionary<string, string>> dbFolderLinks)
-        {
-            if (dbFolderLinks == null || dbFolderLinks.Count == 0)
-                return;
-            Dictionary<string, string> dbGroups = null;
-
-           var nodesToMove = new List<KeyValuePair<string, List<TreeNode>>>();
-           var createNodes = new List<KeyValuePair<string, TreeNode>>();
-
-            string serverName = string.Empty;
-
-            for (int i = node.Nodes.Count - 1; i > -1; i--)
-            {
-                TreeNode tn = node.Nodes[i];
-                Urn rn = GetNodeUrn(tn);
-                if (rn == null)
-                    continue;
-                if (string.IsNullOrEmpty(serverName))
-                    serverName = rn.GetAttribute("Name", "Server");
-                if (dbGroups == null && !string.IsNullOrEmpty(serverName) && dbFolderLinks.ContainsKey(serverName))
-                    dbGroups = dbFolderLinks[serverName];
-
-                string dbName = rn.GetAttribute("Name", "Database");
-
-                if (!string.IsNullOrEmpty(dbName) && dbGroups != null && dbGroups.ContainsKey(dbName))
-                {
-                    var kvpCreateNd = new KeyValuePair<string, TreeNode>(dbGroups[dbName], null);
-                    var kvpNodesToMove = new KeyValuePair<string, List<TreeNode>>(dbGroups[dbName], new List<TreeNode>());
-                    kvpNodesToMove.Value.Add(tn);
-
-                    if (!createNodes.Contains(kvpCreateNd))
-                        createNodes.Add(kvpCreateNd);
-                    if (!nodesToMove.Contains(kvpNodesToMove))
-                        nodesToMove.Add(kvpNodesToMove);
-                }
-            }
-
             DoReorganization(node, nodesToMove, createNodes, imageName, subItemImage);
         }
+
 
         /// <summary>
         /// Reorganizing nodes according to move list and new node list
@@ -332,7 +191,7 @@ namespace Ssms2012Extender
             }
         }
 
-        public TreeNode CreateChildTreeNodeWithMenu(TreeNode parent)
+        private TreeNode CreateChildTreeNodeWithMenu(TreeNode parent)
         {
             var node = new MyTreeNode(parent);
             parent.Nodes.Add(node);

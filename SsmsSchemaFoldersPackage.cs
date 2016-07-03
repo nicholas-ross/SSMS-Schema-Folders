@@ -1,27 +1,12 @@
-﻿//------------------------------------------------------------------------------
-// <copyright file="SsmsSchemaFoldersPackage.cs" company="Company">
-//     Copyright (c) Company.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-
+﻿using Microsoft.SqlServer.Management.SqlStudio.Explorer;
+using Microsoft.SqlServer.Management.UI.VSIntegration.ObjectExplorer;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 using System;
-using System.ComponentModel.Design;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using Microsoft.SqlServer.Management.SqlStudio.Explorer;
-using Microsoft.SqlServer.Management.UI.VSIntegration;
-using Microsoft.SqlServer.Management.UI.VSIntegration.ObjectExplorer;
-using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.OLE.Interop;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.Win32;
-using Ssms2012Extender;
-
 
 namespace SsmsSchemaFolders
 {
@@ -179,8 +164,7 @@ namespace SsmsSchemaFolders
         /// Gets the underlying object which is responsible for displaying object explorer structure
         /// </summary>
         /// <returns></returns>
-        //-private TreeView GetObjectExplorerTreeView()
-        public TreeView GetObjectExplorerTreeView()
+        private TreeView GetObjectExplorerTreeView()
         {
 
             Type t = _objExplorerService.GetType();
@@ -223,16 +207,12 @@ namespace SsmsSchemaFolders
                             case "Server/Database/StoredProceduresFolder":
                             case "Server/Database/Table-valuedFunctionsFolder":
                             case "Server/Database/Scalar-valuedFunctionsFolder":
-                                _objectExplorerExtender.ReorganizeNodes(node, "FolderDown", string.Empty);
-                                break;
                             case "Server/Database/SystemTablesFolder":
                             case "Server/Database/SystemViewsFolder":
                             case "Server/Database/SystemStoredProceduresFolder":
-                                _objectExplorerExtender.ReorganizeNodes(node, "FolderSelected", string.Empty);
+                                _objectExplorerExtender.ReorganizeNodes(node, "SchemaFolder", string.Empty);
                                 break;
-                            case "Server/DatabasesFolder":
-                                //TODO: _objectExplorerExtender.ReorganizeDbNodes(node, "FolderEdit", string.Empty, GetDictionary());
-                                break;
+
                             default:
                                 break;
                         }

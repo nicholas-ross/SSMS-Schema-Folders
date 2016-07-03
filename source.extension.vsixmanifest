@@ -3,7 +3,7 @@
   <Metadata>
     <Identity Id="SsmsSchemaFolders.Nicholas Ross.768d4c73-0842-456d-9b52-2329af3c18f0" Version="1.0" Language="en-US" Publisher="Nicholas Ross" />
     <DisplayName>SsmsSchemaFolders</DisplayName>
-    <Description>Empty VSIX Project.</Description>
+    <Description xml:space="preserve">SSMS Schema FoldersSsmsSchemaFolders</Description>
   </Metadata>
   <Installation>
     <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[14.0]" />
