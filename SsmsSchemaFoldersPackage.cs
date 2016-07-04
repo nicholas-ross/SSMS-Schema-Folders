@@ -76,12 +76,19 @@ namespace SsmsSchemaFolders
                  * the code below just throws null exception if you have wrong reference */
 
                 _objExplorerService = (ObjectExplorerService)this.GetService(typeof(IObjectExplorerService));
-                _cs = (ContextService)_objExplorerService.Container.Components[0]; //might not be first item if navigation server is open
-                _cs.ObjectExplorerContext.CurrentContextChanged += new NodesChangedEventHandler(ObjectExplorerContext_CurrentContextChanged);
+                foreach (var c in _objExplorerService.Container.Components)
+                {
+                    if (c is ContextService)
+                    {
+                        _cs = (ContextService)c;
+                        _cs.ObjectExplorerContext.CurrentContextChanged += new NodesChangedEventHandler(ObjectExplorerContext_CurrentContextChanged);
+                        return;
+                    }
+                }
             }
             catch (Exception ex)
             {
-                debug_message("OnConnection::ERROR " + ex.Message);
+                debug_message("Initialize::ERROR " + ex.Message);
             }
 
         }
