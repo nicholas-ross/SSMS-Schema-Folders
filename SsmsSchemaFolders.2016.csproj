@@ -64,7 +64,7 @@
   <ItemGroup>
     <None Include="Key.snk" />
     <None Include="packages.config" />
-    <None Include="SkipLoading.reg">
+    <None Include="SkipLoading.2016.reg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="source.extension.vsixmanifest">

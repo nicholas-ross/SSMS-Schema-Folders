@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsmsSchemaFolders", "SsmsSchemaFolders.csproj", "{6EA9A0DD-D6B6-434A-B67B-F92E12B005F7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsmsSchemaFolders.2016", "SsmsSchemaFolders.2016.csproj", "{6EA9A0DD-D6B6-434A-B67B-F92E12B005F7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ssms2014SchemaFolders", "Ssms2014SchemaFolders.csproj", "{D733F495-4F0C-45F1-B839-A29F470A3E4D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsmsSchemaFolders.2014", "SsmsSchemaFolders.2014.csproj", "{D733F495-4F0C-45F1-B839-A29F470A3E4D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ssms2012SchemaFolders", "Ssms2012SchemaFolders.csproj", "{9C9FA743-0D5D-4847-9544-3AD0FFBAD79F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsmsSchemaFolders.2012", "SsmsSchemaFolders.2012.csproj", "{9C9FA743-0D5D-4847-9544-3AD0FFBAD79F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
