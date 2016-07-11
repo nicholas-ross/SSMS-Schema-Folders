@@ -91,19 +91,33 @@ namespace SsmsSchemaFolders
                 debug_message("Initialize::ERROR " + ex.Message);
             }
 
+            // Reg setting is removed after initialize. Wait short delay then recreate it.
+            DelayAddSkipLoadingReg();
         }
 
 
-        protected override int QueryClose(out bool canClose)
-        {
-            AddSkipLoadingReg();
-            return base.QueryClose(out canClose);
-        }
+        //protected override int QueryClose(out bool canClose)
+        //{
+        //    AddSkipLoadingReg();
+        //    return base.QueryClose(out canClose);
+        //}
 
         private void AddSkipLoadingReg()
         {
             var myPackage = this.UserRegistryRoot.CreateSubKey(@"Packages\{" + SsmsSchemaFoldersPackage.PackageGuidString + "}");
             myPackage.SetValue("SkipLoading", 1);
+        }
+
+        private void DelayAddSkipLoadingReg()
+        {
+            var delay = new Timer();
+            delay.Tick += delegate (object o, EventArgs e)
+            {
+                delay.Stop();
+                AddSkipLoadingReg();
+            };
+            delay.Interval = 1000;
+            delay.Start();
         }
 
         #endregion
