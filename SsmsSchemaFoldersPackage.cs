@@ -90,7 +90,7 @@ namespace SsmsSchemaFolders
                     {
                         _cs = (ContextService)c;
                         _cs.ObjectExplorerContext.CurrentContextChanged += new NodesChangedEventHandler(ObjectExplorerContext_CurrentContextChanged);
-                        return;
+                        break;
                     }
                 }
             }
