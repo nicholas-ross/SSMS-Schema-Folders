@@ -12,20 +12,15 @@ namespace SsmsSchemaFolders
     public class ObjectExplorerExtender
     {
 
-        //settings
-        public bool AppendDot { get; set; }
-        public bool CloneParentNode { get; set; }
-        public bool UseObjectIcon { get; set; }
+        private SchemaFolderOptions Options { get; }
 
 
         /// <summary>
         /// 
         /// </summary>
-        public ObjectExplorerExtender()
+        public ObjectExplorerExtender(SchemaFolderOptions options)
         {
-            AppendDot = true;
-            UseObjectIcon = true;
-            CloneParentNode = true;
+            Options = options;
         }
 
 
@@ -122,7 +117,7 @@ namespace SsmsSchemaFolders
                 return;
 
             var imageIndex = node.ImageIndex;
-            if (UseObjectIcon && node.Nodes.Count > 0)
+            if (Options.UseObjectIcon && node.Nodes.Count > 0)
             {
                 // First node icon is usually system objects folder so use second node if it exists.
                 //imageIndex = (node.Nodes.Count > 1) ? node.Nodes[1].ImageIndex : node.Nodes[0].ImageIndex;
@@ -142,9 +137,9 @@ namespace SsmsSchemaFolders
                     else
                     {
                         //KeyValuePair<string, TreeNode> kvpNew = new KeyValuePair<string, TreeNode>(kvp.Key, node.Nodes.Add(kvp.Key, kvp.Key, imageName, imageName));
-                        var schemaNode = (CloneParentNode) ? CreateChildTreeNodeWithMenu(node) : node.Nodes.Add(kvp.Key, kvp.Key, imageIndex, imageIndex);
+                        var schemaNode = (Options.CloneParentNode) ? CreateChildTreeNodeWithMenu(node) : node.Nodes.Add(kvp.Key, kvp.Key, imageIndex, imageIndex);
                         schemaNode.Name = kvp.Key;
-                        schemaNode.Text = (AppendDot) ? kvp.Key + "." : kvp.Key;
+                        schemaNode.Text = (Options.AppendDot) ? kvp.Key + "." : kvp.Key;
                         schemaNode.ImageIndex = imageIndex;
                         schemaNode.SelectedImageIndex = imageIndex;
                         //schemaNode.ToolTipText = ;

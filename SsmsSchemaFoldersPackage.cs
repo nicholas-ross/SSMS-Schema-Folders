@@ -31,6 +31,7 @@ namespace SsmsSchemaFolders
     [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)] // Info on this package for Help/About
     [Guid(SsmsSchemaFoldersPackage.PackageGuidString)]
     [ProvideAutoLoad(Microsoft.SqlServer.Management.UI.VSIntegration.CommandGuids.ObjectExplorerToolWindowIDString)]
+    [ProvideOptionPage(typeof(SchemaFolderOptions), "Extensions", "Schema Folders", 101, 106, true)]
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "pkgdef, VS and vsixmanifest are valid VS terms")]
     public sealed class SsmsSchemaFoldersPackage : Package
     {
@@ -38,6 +39,8 @@ namespace SsmsSchemaFolders
         /// SsmsSchemaFoldersPackage GUID string.
         /// </summary>
         public const string PackageGuidString = "a88a775f-7c86-4a09-b5a6-890c4c38261b";
+
+        public SchemaFolderOptions Options { get; set; }
 
         ObjectExplorerService _objExplorerService;
         ObjectExplorerExtender _objectExplorerExtender;
@@ -68,6 +71,11 @@ namespace SsmsSchemaFolders
         protected override void Initialize()
         {
             base.Initialize();
+
+            // Link with VS options.
+            object obj;
+            (this as IVsPackage).GetAutomationObject("Extensions.Schema Folders", out obj);
+            Options = obj as SchemaFolderOptions;
 
             try
             {
@@ -143,7 +151,7 @@ namespace SsmsSchemaFolders
                     if (_objectExplorerExtender == null)
                     {
                         //-logger.LogStart("ObjectExplorerExtender");
-                        _objectExplorerExtender = new ObjectExplorerExtender();
+                        _objectExplorerExtender = new ObjectExplorerExtender(Options);
                         //logger.LogEnd("ObjectExplrerExtender");
                         if (_trv != null)
                         {
@@ -212,6 +220,8 @@ namespace SsmsSchemaFolders
         void ReorganizeFolders(TreeNode node)
         {
             //-logger.LogStart(System.Reflection.MethodBase.GetCurrentMethod().Name);
+            if (!Options.Enabled)
+                return;
             try
             {
                 if (node != null && node.Parent != null && (node.Tag == null || node.Tag.ToString() != "SchemaFolder"))
