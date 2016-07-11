@@ -31,7 +31,7 @@ namespace SsmsSchemaFolders
     [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)] // Info on this package for Help/About
     [Guid(SsmsSchemaFoldersPackage.PackageGuidString)]
     [ProvideAutoLoad(Microsoft.SqlServer.Management.UI.VSIntegration.CommandGuids.ObjectExplorerToolWindowIDString)]
-    [ProvideOptionPage(typeof(SchemaFolderOptions), "Extensions", "Schema Folders", 101, 106, true)]
+    [ProvideOptionPage(typeof(SchemaFolderOptions), "SQL Server Object Explorer", "Schema Folders", 114, 116, true)]
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "pkgdef, VS and vsixmanifest are valid VS terms")]
     public sealed class SsmsSchemaFoldersPackage : Package
     {
@@ -87,7 +87,7 @@ namespace SsmsSchemaFolders
 
             // Link with VS options.
             object obj;
-            (this as IVsPackage).GetAutomationObject("Extensions.Schema Folders", out obj);
+            (this as IVsPackage).GetAutomationObject("SQL Server Object Explorer.Schema Folders", out obj);
             Options = obj as SchemaFolderOptions;
 
             try
