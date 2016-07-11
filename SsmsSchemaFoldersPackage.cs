@@ -51,6 +51,11 @@ namespace SsmsSchemaFolders
         TreeView _trv = null;
         bool _attached = false;
 
+        // Ignore never assigned to warning for release build.
+#pragma warning disable CS0649
+        private IVsOutputWindowPane OutputWindowPane;
+#pragma warning restore CS0649
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SsmsSchemaFoldersPackage"/> class.
         /// </summary>
@@ -71,6 +76,14 @@ namespace SsmsSchemaFolders
         protected override void Initialize()
         {
             base.Initialize();
+
+            // OutputWindowPane for debug messages
+#if DEBUG
+            var outputWindow = this.GetService(typeof(SVsOutputWindow)) as IVsOutputWindow;
+            var guidPackage = new Guid(PackageGuidString);
+            outputWindow.CreatePane(guidPackage, "Schema Folders debug output", 1, 0);
+            outputWindow.GetPane(ref guidPackage, out OutputWindowPane);
+#endif
 
             // Link with VS options.
             object obj;
@@ -93,6 +106,8 @@ namespace SsmsSchemaFolders
                         break;
                     }
                 }
+                if (_cs == null)
+                    debug_message("Failed to find ContextService");
             }
             catch (Exception ex)
             {
@@ -150,7 +165,7 @@ namespace SsmsSchemaFolders
                 {
                     if (_objectExplorerExtender == null)
                     {
-                        //-logger.LogStart("ObjectExplorerExtender");
+                        debug_message("ObjectExplorerExtender");
                         _objectExplorerExtender = new ObjectExplorerExtender(Options);
                         //logger.LogEnd("ObjectExplrerExtender");
                         if (_trv != null)
@@ -175,8 +190,7 @@ namespace SsmsSchemaFolders
                 }
                 else if (_trv != null)
                 {
-                    //-logger.LogStart(" Inovke Required sender is " + (sender == null ? "null" : "not null"), "args is " +
-                    //-(args == null ? "null" : "not null"));
+                    debug_message(" Inovke Required. sender is " + (sender == null ? "null" : "not null") + ", args is " + (args == null ? "null" : "not null"));
                     //IntPtr ptr = _trv.Handle;
                     _trv.BeginInvoke(new NodesChangedEventHandler(ObjectExplorerContext_CurrentContextChanged), new object[] { sender, args });
                     //-logger.LogEnd("Invoke Required ");
@@ -219,7 +233,7 @@ namespace SsmsSchemaFolders
         /// <param name="node"></param>
         void ReorganizeFolders(TreeNode node)
         {
-            //-logger.LogStart(System.Reflection.MethodBase.GetCurrentMethod().Name);
+            debug_message(System.Reflection.MethodBase.GetCurrentMethod().Name);
             if (!Options.Enabled)
                 return;
             try
@@ -229,7 +243,7 @@ namespace SsmsSchemaFolders
                     INodeInformation ni = _objectExplorerExtender.GetNodeInformation(node);
                     if (ni != null && !string.IsNullOrEmpty(ni.UrnPath))
                     {
-                        //MessageBox.Show(ni.UrnPath);
+                        debug_message(ni.UrnPath);
                         switch (ni.UrnPath)
                         {
                             case "Server/Database/UserTablesFolder":
@@ -257,8 +271,6 @@ namespace SsmsSchemaFolders
                 else
                     MessageBox.Show(ex.ToString());
             }
-
-            //-logger.LogEnd(System.Reflection.MethodBase.GetCurrentMethod().Name);
         }
 
 
@@ -269,8 +281,7 @@ namespace SsmsSchemaFolders
         /// <param name="e">expanding node</param>
         void _trv_AfterExpand(object sender, TreeViewEventArgs e)
         {
-
-            //-logger.LogStart(System.Reflection.MethodBase.GetCurrentMethod().Name);
+            debug_message(System.Reflection.MethodBase.GetCurrentMethod().Name);
             // Wait for the async node expand to finish or we could miss indexes
             try
             {
@@ -293,8 +304,6 @@ namespace SsmsSchemaFolders
                 debug_message(ex.ToString());
                 debug_message(ex.StackTrace.ToString());
             }
-
-            //-logger.LogEnd(System.Reflection.MethodBase.GetCurrentMethod().Name);
         }
 
         /// <summary>
@@ -304,7 +313,7 @@ namespace SsmsSchemaFolders
         /// <param name="e"></param>
         void _trv_BeforeExpand(object sender, TreeViewCancelEventArgs e)
         {
-            
+            debug_message(System.Reflection.MethodBase.GetCurrentMethod().Name);
             try
             {
                 if (_trv.InvokeRequired)
@@ -323,7 +332,12 @@ namespace SsmsSchemaFolders
 
         private void debug_message(string message)
         {
-            //*
+            if (OutputWindowPane != null)
+            {
+                OutputWindowPane.OutputString(message);
+                OutputWindowPane.OutputString("\r\n");
+            }
+            /*
             VsShellUtilities.ShowMessageBox(
                 this,
                 message,
