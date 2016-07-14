@@ -5,7 +5,7 @@ namespace SsmsSchemaFolders
 {
     public class SchemaFolderOptions : DialogPage
     {
-        [Category("Enabled")]
+        [Category("Active")]
         [DisplayName("Enabled")]
         [Description("Group sql objects in Object Explorer (tables, views, etc.) into schema folders.")]
         public bool Enabled { get; set; } = true;
@@ -17,12 +17,12 @@ namespace SsmsSchemaFolders
 
         [Category("Folder Display Options")]
         [DisplayName("Clone Parent Node")]
-        [Description("Add the right click and drag and drop functionality of the parent node to the schema folder node.")]
+        [Description("Add the right click and connection properties of the parent node to the schema folder node.")]
         public bool CloneParentNode { get; set; } = true;
 
         [Category("Folder Display Options")]
         [DisplayName("Use Object Icon")]
-        [Description("Use the icon of the first child node as the folder icon. If false then use the parent node (i.e. folder) icon.")]
+        [Description("Use the icon of the last child node as the folder icon. If false then use the parent node (i.e. folder) icon.")]
         public bool UseObjectIcon { get; set; } = true;
     }
 }
