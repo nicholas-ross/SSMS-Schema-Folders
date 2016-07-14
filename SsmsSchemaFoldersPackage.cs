@@ -1,4 +1,5 @@
-﻿using Microsoft.SqlServer.Management.UI.VSIntegration.ObjectExplorer;
+﻿using Microsoft.SqlServer.Management.UI.VSIntegration;
+using Microsoft.SqlServer.Management.UI.VSIntegration.ObjectExplorer;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using System;
@@ -29,7 +30,7 @@ namespace SsmsSchemaFolders
     [PackageRegistration(UseManagedResourcesOnly = true)]
     [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)] // Info on this package for Help/About
     [Guid(SsmsSchemaFoldersPackage.PackageGuidString)]
-    [ProvideAutoLoad(Microsoft.SqlServer.Management.UI.VSIntegration.CommandGuids.ObjectExplorerToolWindowIDString)]
+    [ProvideAutoLoad(CommandGuids.ObjectExplorerToolWindowIDString)]
     [ProvideOptionPage(typeof(SchemaFolderOptions), "SQL Server Object Explorer", "Schema Folders", 114, 116, true)]
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "pkgdef, VS and vsixmanifest are valid VS terms")]
     public sealed class SsmsSchemaFoldersPackage : Package
@@ -40,13 +41,12 @@ namespace SsmsSchemaFolders
         public const string PackageGuidString = "a88a775f-7c86-4a09-b5a6-890c4c38261b";
 
         public SchemaFolderOptions Options { get; set; }
-
-        IObjectExplorerService _objExplorerService;
-        ObjectExplorerExtender _objectExplorerExtender;
+        
+        private ObjectExplorerExtender _objectExplorerExtender;
 
         // Ignore never assigned to warning for release build.
 #pragma warning disable CS0649
-        private IVsOutputWindowPane OutputWindowPane;
+        private IVsOutputWindowPane _outputWindowPane;
 #pragma warning restore CS0649
 
         /// <summary>
@@ -72,45 +72,32 @@ namespace SsmsSchemaFolders
 
             // OutputWindowPane for debug messages
 #if DEBUG
-            var outputWindow = this.GetService(typeof(SVsOutputWindow)) as IVsOutputWindow;
+            var outputWindow = (IVsOutputWindow)GetService(typeof(SVsOutputWindow));
             var guidPackage = new Guid(PackageGuidString);
             outputWindow.CreatePane(guidPackage, "Schema Folders debug output", 1, 0);
-            outputWindow.GetPane(ref guidPackage, out OutputWindowPane);
+            outputWindow.GetPane(ref guidPackage, out _outputWindowPane);
 #endif
 
             // Link with VS options.
             object obj;
             (this as IVsPackage).GetAutomationObject("SQL Server Object Explorer.Schema Folders", out obj);
-            Options = obj as SchemaFolderOptions;
+            Options = (SchemaFolderOptions)obj;
 
-            try
-            {
-                /* Microsoft.SqlServer.Management.UI.VSIntegration.ServiceCache
-                 * is from SqlPackageBase.dll and not from Microsoft.SqlServer.SqlTools.VSIntegration.dll
-                 * the code below just throws null exception if you have wrong reference */
+            _objectExplorerExtender = new ObjectExplorerExtender(Options);
 
-                _objExplorerService = (IObjectExplorerService)this.GetService(typeof(IObjectExplorerService));
-
-                _objectExplorerExtender = new ObjectExplorerExtender(Options);
-
-                AttachTreeViewEvents();
-
-            }
-            catch (Exception ex)
-            {
-                debug_message("Initialize::ERROR " + ex.Message);
-            }
+            AttachTreeViewEvents();
 
             // Reg setting is removed after initialize. Wait short delay then recreate it.
             DelayAddSkipLoadingReg();
         }
-
 
         //protected override int QueryClose(out bool canClose)
         //{
         //    AddSkipLoadingReg();
         //    return base.QueryClose(out canClose);
         //}
+
+        #endregion
 
         private void AddSkipLoadingReg()
         {
@@ -130,13 +117,16 @@ namespace SsmsSchemaFolders
             delay.Start();
         }
 
-        #endregion
-
-        void AttachTreeViewEvents()
+        private void AttachTreeViewEvents()
         {
             var treeView = GetObjectExplorerTreeView();
-            treeView.BeforeExpand += new TreeViewCancelEventHandler(ObjectExplorerTreeViewBeforeExpandCallback);
-            treeView.AfterExpand += new TreeViewEventHandler(ObjectExplorerTreeViewAfterExpandCallback);
+            if (treeView != null)
+            {
+                treeView.BeforeExpand += new TreeViewCancelEventHandler(ObjectExplorerTreeViewBeforeExpandCallback);
+                treeView.AfterExpand += new TreeViewEventHandler(ObjectExplorerTreeViewAfterExpandCallback);
+            }
+            else
+                debug_message("Object Explorer TreeView == null");
         }
 
         /// <summary>
@@ -145,31 +135,38 @@ namespace SsmsSchemaFolders
         /// <returns></returns>
         private TreeView GetObjectExplorerTreeView()
         {
-            Type t = _objExplorerService.GetType();
-            PropertyInfo pi = t.GetProperty("Tree", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.IgnoreCase);
-            if (pi != null)
-                return (TreeView)pi.GetValue(_objExplorerService, null);
+            var objectExplorerService = (IObjectExplorerService)GetService(typeof(IObjectExplorerService));
+            if (objectExplorerService != null)
+            {
+                var oesTreeProperty = objectExplorerService.GetType().GetProperty("Tree", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.IgnoreCase);
+                if (oesTreeProperty != null)
+                    return (TreeView)oesTreeProperty.GetValue(objectExplorerService, null);
+                else
+                    debug_message("Object Explorer Tree property not found.");
+            }
             else
-                return null;
+                debug_message("objectExplorerService == null");
+
+            return null;
         }
 
         /// <summary>
         /// Adds new nodes and move items between them
         /// </summary>
         /// <param name="node"></param>
-        void ReorganizeFolders(TreeNode node)
+        private void ReorganizeFolders(TreeNode node)
         {
             debug_message("ReorganizeFolders");
-            if (!Options.Enabled)
-                return;
             try
             {
+                // uses node.Tag to prevent this running again on already orgainsed schema folder
                 if (node != null && node.Parent != null && (node.Tag == null || node.Tag.ToString() != "SchemaFolder"))
                 {
                     INodeInformation ni = _objectExplorerExtender.GetNodeInformation(node);
                     if (ni != null && !string.IsNullOrEmpty(ni.UrnPath))
                     {
-                        debug_message(ni.UrnPath);
+                        debug_message(String.Format("NodeInformation\n UrnPath:{0}\n Name:{1}\n InvariantName:{2}\n Context:{3}\n NavigationContext:{4}", ni.UrnPath, ni.Name, ni.InvariantName, ni.Context, ni.NavigationContext));
+                        
                         switch (ni.UrnPath)
                         {
                             case "Server/Database/UserTablesFolder":
@@ -181,7 +178,7 @@ namespace SsmsSchemaFolders
                             case "Server/Database/SystemTablesFolder":
                             case "Server/Database/SystemViewsFolder":
                             case "Server/Database/SystemStoredProceduresFolder":
-                                _objectExplorerExtender.ReorganizeNodes(node, "SchemaFolder", string.Empty);
+                                _objectExplorerExtender.ReorganizeNodes(node, "SchemaFolder");
                                 break;
 
                             default:
@@ -204,18 +201,22 @@ namespace SsmsSchemaFolders
         /// <param name="e">expanding node</param>
         void ObjectExplorerTreeViewAfterExpandCallback(object sender, TreeViewEventArgs e)
         {
-            debug_message("ObjectExplorerTreeViewAfterExpandCallback");
+            debug_message("\nObjectExplorerTreeViewAfterExpandCallback");
             // Wait for the async node expand to finish or we could miss nodes
             try
             {
-                var node = e.Node as ILazyLoadingNode;
-                int waitCount = 0;
-                while (node != null && node.Expanding && waitCount < 50000)
+                debug_message(String.Format("Node.Count:{0}", e.Node.GetNodeCount(false)));
+
+                if (!Options.Enabled)
+                    return;
+
+                var lazyNode = e.Node as ILazyLoadingNode;
+                if (lazyNode != null && lazyNode.Expanding)
                 {
+                    debug_message("node.Expanding");
                     Application.DoEvents();
-                    waitCount++;
+                    debug_message(String.Format("Node.Count:{0}", e.Node.GetNodeCount(false)));
                 }
-                debug_message(String.Format("node.Expanding  waitCount:{0}", waitCount));
 
                 ReorganizeFolders(e.Node);
             }
@@ -232,9 +233,17 @@ namespace SsmsSchemaFolders
         /// <param name="e"></param>
         void ObjectExplorerTreeViewBeforeExpandCallback(object sender, TreeViewCancelEventArgs e)
         {
-            debug_message("ObjectExplorerTreeViewBeforeExpandCallback");
+            debug_message("\nObjectExplorerTreeViewBeforeExpandCallback");
             try
             {
+                debug_message(String.Format("Node.Count:{0}",e.Node.GetNodeCount(false)));
+
+                if (!Options.Enabled)
+                    return;
+
+                if (e.Node.GetNodeCount(false) == 1)
+                    return;
+
                 ReorganizeFolders(e.Node);
             }
             catch (Exception ex)
@@ -246,10 +255,10 @@ namespace SsmsSchemaFolders
 
         private void debug_message(string message)
         {
-            if (OutputWindowPane != null)
+            if (_outputWindowPane != null)
             {
-                OutputWindowPane.OutputString(message);
-                OutputWindowPane.OutputString("\r\n");
+                _outputWindowPane.OutputString(message);
+                _outputWindowPane.OutputString("\r\n");
             }
             /*
             VsShellUtilities.ShowMessageBox(

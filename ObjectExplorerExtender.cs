@@ -1,7 +1,7 @@
-﻿using Microsoft.SqlServer.Management.Sdk.Sfc;
-using Microsoft.SqlServer.Management.UI.VSIntegration.ObjectExplorer;
+﻿using Microsoft.SqlServer.Management.UI.VSIntegration.ObjectExplorer;
 using System;
 using System.Collections.Generic;
+//using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace SsmsSchemaFolders
@@ -13,6 +13,7 @@ namespace SsmsSchemaFolders
     {
 
         private SchemaFolderOptions Options { get; }
+        //private Regex NodeSchemaRegex;
 
 
         /// <summary>
@@ -21,6 +22,7 @@ namespace SsmsSchemaFolders
         public ObjectExplorerExtender(SchemaFolderOptions options)
         {
             Options = options;
+            //NodeSchemaRegex = new Regex(@"@Schema='((''|[^'])+)'");
         }
 
 
@@ -29,63 +31,50 @@ namespace SsmsSchemaFolders
         /// </summary>
         /// <param name="node"></param>
         /// <returns></returns>
+        /// <remarks>Copy of private method in ObjectExplorerService</remarks>
         public INodeInformation GetNodeInformation(TreeNode node)
         {
-            INodeInformation service = null;
-            IServiceProvider provider = node as IServiceProvider;
-
-            if (provider != null)
+            INodeInformation result = null;
+            IServiceProvider serviceProvider = node as IServiceProvider;
+            if (serviceProvider != null)
             {
-                service = provider.GetService(typeof(INodeInformation)) as INodeInformation;
+                result = (serviceProvider.GetService(typeof(INodeInformation)) as INodeInformation);
             }
-            return service;
+            return result;
         }
 
-
-        /// <summary>
-        /// Get urn from tree node view
-        /// </summary>
-        /// <param name="node"></param>
-        /// <returns></returns>
-        private Urn GetNodeUrn(TreeNode node)
+        private String GetNodeSchema(TreeNode node)
         {
-            INodeInformation service = GetNodeInformation(node);
-            return GetServiceUrn(service);
-        }
+            var ni = GetNodeInformation(node);
+            if (ni != null)
+            {
+                // parse ni.Context = Server[@Name='NR-DEV\SQL2008R2EXPRESS']/Database[@Name='tempdb']/Table[@Name='test.''escape''[value]' and @Schema='dbo']
+                // or compare ni.Name vs ni.InvariantName = ObjectName vs SchemaName.ObjectName
 
-        /// <summary>
-        /// Get urn from underlying node information
-        /// </summary>
-        /// <param name="service">INodeInformation of object explorer item</param>
-        /// <returns>Urn of node</returns>
-        private Urn GetServiceUrn(INodeInformation service)
-        {
-            Urn urn = null;
-            if (service != null)
-                urn = new Urn(service.Context);
-            return urn;
+                //var match = NodeSchemaRegex.Match(ni.Context);
+                //if (match.Success)
+                //    return match.Groups[1].Value;
+
+                if (ni.InvariantName.EndsWith("." + ni.Name))
+                    return ni.InvariantName.Replace("." + ni.Name, String.Empty);
+            }
+            return null;
         }
-        
 
         /// <summary>
         /// Create schema nodes and move tables under its schema node, functions and stored procedures
         /// </summary>
         /// <param name="node">Table node to reorganize</param>
-        /// <param name="imageName">Image of new node</param>
-        /// <param name="subItemImage">Image for subnodes, if empty - current image will be used</param>
-        public void ReorganizeNodes(TreeNode node, string imageName, string subItemImage)
+        /// <param name="nodeTag">Tag of new node</param>
+        public void ReorganizeNodes(TreeNode node, string nodeTag)
         {
             var nodesToMove = new List<KeyValuePair<string, List<TreeNode>>>();
             var createNodes = new List<KeyValuePair<string, TreeNode>>();
 
             for (int i = node.Nodes.Count - 1; i > -1; i--)
             {
-                TreeNode tn = node.Nodes[i];
-                Urn rn = GetNodeUrn(tn);
-                if (rn == null)
-                    continue;
-                //MessageBox.Show(rn.Type);
-                string schema = rn.GetAttribute("Schema");
+                var tn = node.Nodes[i];
+                string schema = GetNodeSchema(tn);
                 if (string.IsNullOrEmpty(schema))
                     continue;
 
@@ -95,80 +84,79 @@ namespace SsmsSchemaFolders
 
                 if (!createNodes.Contains(kvpCreateNd))
                     createNodes.Add(kvpCreateNd);
+
                 if (!nodesToMove.Contains(kvpNodesToMove))
                     nodesToMove.Add(kvpNodesToMove);
             }
 
-            DoReorganization(node, nodesToMove, createNodes, imageName, subItemImage);
+            DoReorganization(node, nodesToMove, createNodes, nodeTag);
         }
 
 
         /// <summary>
         /// Reorganizing nodes according to move list and new node list
         /// </summary>
-        /// <param name="node">parent node</param>
+        /// <param name="parentNode">parent node</param>
         /// <param name="nodesToMove">nodes to move</param>
         /// <param name="createNodes">nodes to create</param>
-        /// <param name="imageName">icon name for created nodes</param>
-        /// <param name="subItemImage">icon name for moved nodes</param>
-        private void DoReorganization(TreeNode node, List<KeyValuePair<string, List<TreeNode>>> nodesToMove, List<KeyValuePair<string, TreeNode>> createNodes, string imageName, string subItemImage )
+        /// <param name="nodeTag">tag for created nodes</param>
+        private void DoReorganization(TreeNode parentNode, List<KeyValuePair<string, List<TreeNode>>> nodesToMove, List<KeyValuePair<string, TreeNode>> createNodes, string nodeTag)
         {
             if (createNodes == null)
                 return;
 
-            var imageIndex = node.ImageIndex;
-            if (Options.UseObjectIcon && node.Nodes.Count > 0)
+            var imageIndex = parentNode.ImageIndex;
+            if (Options.UseObjectIcon && parentNode.Nodes.Count > 0)
             {
-                // First node icon is usually system objects folder so use second node if it exists.
-                //imageIndex = (node.Nodes.Count > 1) ? node.Nodes[1].ImageIndex : node.Nodes[0].ImageIndex;
-                imageIndex = node.Nodes[node.Nodes.Count - 1].ImageIndex;
+                // First few node icons are usually folders so use icon of last node.
+                imageIndex = parentNode.Nodes[parentNode.Nodes.Count - 1].ImageIndex;
             }
 
-            for (int i = createNodes.Count - 1; i > -1; i--)
+            for (int createNodeIndex = createNodes.Count - 1; createNodeIndex > -1; createNodeIndex--)
             {
-                KeyValuePair<string, TreeNode> kvp = createNodes[i];
+                var kvp = createNodes[createNodeIndex];
                 if (kvp.Value == null)
                 {
-                    if (node.Nodes.ContainsKey(kvp.Key))
+                    if (parentNode.Nodes.ContainsKey(kvp.Key))
                     {
-                        KeyValuePair<string, TreeNode> kvpNew = new KeyValuePair<string, TreeNode>(kvp.Key, node.Nodes[kvp.Key]);
-                        createNodes[i] = kvpNew;
+                        var kvpNew = new KeyValuePair<string, TreeNode>(kvp.Key, parentNode.Nodes[kvp.Key]);
+                        createNodes[createNodeIndex] = kvpNew;
                     }
                     else
                     {
-                        //KeyValuePair<string, TreeNode> kvpNew = new KeyValuePair<string, TreeNode>(kvp.Key, node.Nodes.Add(kvp.Key, kvp.Key, imageName, imageName));
-                        var schemaNode = (Options.CloneParentNode) ? CreateChildTreeNodeWithMenu(node) : node.Nodes.Add(kvp.Key, kvp.Key, imageIndex, imageIndex);
+                        TreeNode schemaNode;
+                        if (Options.CloneParentNode)
+                            schemaNode = CreateChildTreeNodeWithMenu(parentNode);
+                        else
+                            schemaNode = parentNode.Nodes.Add(kvp.Key, kvp.Key, imageIndex, imageIndex);
+
                         schemaNode.Name = kvp.Key;
-                        schemaNode.Text = (Options.AppendDot) ? kvp.Key + "." : kvp.Key;
+                        schemaNode.Text = kvp.Key;
+                        if (Options.AppendDot)
+                            schemaNode.Text += ".";
                         schemaNode.ImageIndex = imageIndex;
                         schemaNode.SelectedImageIndex = imageIndex;
-                        //schemaNode.ToolTipText = ;
-                        schemaNode.Tag = "SchemaFolder";
+                        schemaNode.Tag = nodeTag;
+
                         var kvpNew = new KeyValuePair<string, TreeNode>(kvp.Key, schemaNode);
-                        createNodes[i] = kvpNew;
+                        createNodes[createNodeIndex] = kvpNew;
                     }
                 }
             }
-            // MessageBox.Show(string.Format("Test {0} {1} ", createNodes.Count, nodesToMove.Count));
 
             if (nodesToMove == null)
                 return;
 
             for (int i = nodesToMove.Count - 1; i > -1; i--)
             {
-                KeyValuePair<string, List<TreeNode>> kvp = nodesToMove[i];
+                var kvp = nodesToMove[i];
                 if (kvp.Value != null && kvp.Value.Count > 0)
                 {
-                    foreach (TreeNode tn in kvp.Value)
+                    foreach (var tn in kvp.Value)
                     {
-                        node.Nodes.Remove(tn);
-                        if (!string.IsNullOrEmpty(subItemImage))
-                        {
-                            tn.ImageKey = subItemImage;
-                            tn.SelectedImageKey = subItemImage;
-                        }
+                        parentNode.Nodes.Remove(tn);
                     }
-                    TreeNode[] trnar = new TreeNode[kvp.Value.Count];
+                    var trnar = new TreeNode[kvp.Value.Count];
                     for (int j = 0; j < kvp.Value.Count; j++)
                         trnar[j] = kvp.Value[j];
 

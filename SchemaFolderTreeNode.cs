@@ -13,8 +13,6 @@ namespace SsmsSchemaFolders
         public SchemaFolderTreeNode(object o)
         {
             parent = o;
-            //this.ToolTipText = "INodeInformation is " + ((ni == null) ? "null" : "not null");
-            //this.ToolTipText = (o as INodeWithAltName).NodeName; //database name
         }
 
         public override Icon Icon
