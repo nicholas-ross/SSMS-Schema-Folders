@@ -10,7 +10,7 @@ namespace SsmsSchemaFolders
     /// <summary>
     /// Used to organize Databases and Tables in Object Explorer into groups
     /// </summary>
-    public class ObjectExplorerExtender
+    public class ObjectExplorerExtender : IObjectExplorerExtender
     {
 
         private ISchemaFolderOptions Options { get; }

@@ -7,6 +7,7 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 //using Ssms2016 = Ssms2016::SsmsSchemaFolders;
@@ -94,23 +95,6 @@ namespace SsmsSchemaFolders
             DelayAddSkipLoadingReg();
         }
 
-        private IObjectExplorerExtender GetObjectExplorerExtender()
-        {
-            string ssmsVersion = "2016";
-            if (ssmsVersion == "2016")
-            {
-                return (IObjectExplorerExtender)new Ssms2016::SsmsSchemaFolders.ObjectExplorerExtender(this, Options);
-            }
-            if (ssmsVersion == "2014")
-            {
-                return (IObjectExplorerExtender)new Ssms2014::SsmsSchemaFolders.ObjectExplorerExtender(this, Options);
-            }
-            if (ssmsVersion == "2012")
-            {
-                return (IObjectExplorerExtender)new Ssms2012::SsmsSchemaFolders.ObjectExplorerExtender(this, Options);
-            }
-            return null;
-        }
         //protected override int QueryClose(out bool canClose)
         //{
         //    AddSkipLoadingReg();
@@ -135,6 +119,41 @@ namespace SsmsSchemaFolders
             };
             delay.Interval = 1000;
             delay.Start();
+        }
+
+        private IObjectExplorerExtender GetObjectExplorerExtender()
+        {
+            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                var assemblyName = assembly.GetName();
+                //debug_message(assemblyName.Name + ":" + assemblyName.Version.ToString());
+
+                if (assemblyName.Name == "SqlWorkbench.Interfaces") // && BitConverter.ToString(name.GetPublicKeyToken()) == "89-84-5D-CD-80-80-CC-91")
+                {
+
+                    switch (assemblyName.Version.ToString())
+                    {
+                        case "13.0.0.0":
+                            debug_message("SsmsVersion:2016");
+                            return new Ssms2016::SsmsSchemaFolders.ObjectExplorerExtender(this, Options);
+
+                        case "12.0.0.0":
+                            debug_message("SsmsVersion:2014");
+                            return new Ssms2014::SsmsSchemaFolders.ObjectExplorerExtender(this, Options);
+
+                        case "11.0.0.0":
+                            debug_message("SsmsVersion:2012");
+                            return new Ssms2012::SsmsSchemaFolders.ObjectExplorerExtender(this, Options);
+
+                        default:
+                            debug_message("SqlWorkbench.Interfaces:" + assemblyName.Version.ToString());
+                            break;
+                    }
+                }
+            }
+
+            debug_message("Unknown SSMS Version. Defaulting to 2016.");
+            return new Ssms2016::SsmsSchemaFolders.ObjectExplorerExtender(this, Options);
         }
 
         private void AttachTreeViewEvents()
