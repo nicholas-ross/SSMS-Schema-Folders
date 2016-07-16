@@ -12,14 +12,14 @@ namespace SsmsSchemaFolders
     public class ObjectExplorerExtender
     {
 
-        private SchemaFolderOptions Options { get; }
+        private ISchemaFolderOptions Options { get; }
         //private Regex NodeSchemaRegex;
 
 
         /// <summary>
         /// 
         /// </summary>
-        public ObjectExplorerExtender(SchemaFolderOptions options)
+        public ObjectExplorerExtender(ISchemaFolderOptions options)
         {
             Options = options;
             //NodeSchemaRegex = new Regex(@"@Schema='((''|[^'])+)'");

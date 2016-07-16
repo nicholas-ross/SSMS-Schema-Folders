@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace SsmsSchemaFolders
 {
-    public class SchemaFolderOptions : DialogPage
+    public class SchemaFolderOptions : DialogPage, ISchemaFolderOptions
     {
         [Category("Active")]
         [DisplayName("Enabled")]
