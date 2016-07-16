@@ -5,7 +5,7 @@ using System.Drawing;
 namespace SsmsSchemaFolders
 {
 
-    public class SchemaFolderTreeNode : HierarchyTreeNode, INodeWithMenu, IServiceProvider
+    internal class SchemaFolderTreeNode : HierarchyTreeNode, INodeWithMenu, IServiceProvider
     //IServiceProvider causes the SchemaFolders.DoReorganization to run on itself
     {
         object parent;
@@ -54,7 +54,7 @@ namespace SsmsSchemaFolders
             (parent as INodeWithMenu).DoDefaultAction();
         }
 
-        public void ShowContextMenu(System.Drawing.Point screenPos)
+        public void ShowContextMenu(Point screenPos)
         {
             (parent as INodeWithMenu).ShowContextMenu(screenPos);
         }

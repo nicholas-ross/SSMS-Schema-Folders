@@ -1,12 +1,15 @@
-﻿using Microsoft.SqlServer.Management.UI.VSIntegration;
-using Microsoft.SqlServer.Management.UI.VSIntegration.ObjectExplorer;
+﻿extern alias Ssms2012;
+extern alias Ssms2014;
+extern alias Ssms2016;
+//using Microsoft.SqlServer.Management.UI.VSIntegration;
+//using Microsoft.SqlServer.Management.UI.VSIntegration.ObjectExplorer;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+//using Ssms2016 = Ssms2016::SsmsSchemaFolders;
 
 namespace SsmsSchemaFolders
 {
@@ -30,7 +33,7 @@ namespace SsmsSchemaFolders
     [PackageRegistration(UseManagedResourcesOnly = true)]
     [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)] // Info on this package for Help/About
     [Guid(SsmsSchemaFoldersPackage.PackageGuidString)]
-    [ProvideAutoLoad(CommandGuids.ObjectExplorerToolWindowIDString)]
+    [ProvideAutoLoad("d114938f-591c-46cf-a785-500a82d97410")] //CommandGuids.ObjectExplorerToolWindowIDString
     [ProvideOptionPage(typeof(SchemaFolderOptions), "SQL Server Object Explorer", "Schema Folders", 114, 116, true)]
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "pkgdef, VS and vsixmanifest are valid VS terms")]
     public sealed class SsmsSchemaFoldersPackage : Package
@@ -42,7 +45,7 @@ namespace SsmsSchemaFolders
 
         public SchemaFolderOptions Options { get; set; }
         
-        private ObjectExplorerExtender _objectExplorerExtender;
+        private IObjectExplorerExtender _objectExplorerExtender;
 
         // Ignore never assigned to warning for release build.
 #pragma warning disable CS0649
@@ -83,7 +86,7 @@ namespace SsmsSchemaFolders
             (this as IVsPackage).GetAutomationObject("SQL Server Object Explorer.Schema Folders", out obj);
             Options = (SchemaFolderOptions)obj;
 
-            _objectExplorerExtender = new ObjectExplorerExtender(Options);
+            _objectExplorerExtender = GetObjectExplorerExtender();
 
             AttachTreeViewEvents();
 
@@ -91,6 +94,23 @@ namespace SsmsSchemaFolders
             DelayAddSkipLoadingReg();
         }
 
+        private IObjectExplorerExtender GetObjectExplorerExtender()
+        {
+            string ssmsVersion = "2016";
+            if (ssmsVersion == "2016")
+            {
+                return (IObjectExplorerExtender)new Ssms2016::SsmsSchemaFolders.ObjectExplorerExtender(this, Options);
+            }
+            if (ssmsVersion == "2014")
+            {
+                return (IObjectExplorerExtender)new Ssms2014::SsmsSchemaFolders.ObjectExplorerExtender(this, Options);
+            }
+            if (ssmsVersion == "2012")
+            {
+                return (IObjectExplorerExtender)new Ssms2012::SsmsSchemaFolders.ObjectExplorerExtender(this, Options);
+            }
+            return null;
+        }
         //protected override int QueryClose(out bool canClose)
         //{
         //    AddSkipLoadingReg();
@@ -119,7 +139,7 @@ namespace SsmsSchemaFolders
 
         private void AttachTreeViewEvents()
         {
-            var treeView = GetObjectExplorerTreeView();
+            var treeView = _objectExplorerExtender.GetObjectExplorerTreeView();
             if (treeView != null)
             {
                 treeView.BeforeExpand += new TreeViewCancelEventHandler(ObjectExplorerTreeViewBeforeExpandCallback);
@@ -127,27 +147,6 @@ namespace SsmsSchemaFolders
             }
             else
                 debug_message("Object Explorer TreeView == null");
-        }
-
-        /// <summary>
-        /// Gets the underlying object which is responsible for displaying object explorer structure
-        /// </summary>
-        /// <returns></returns>
-        private TreeView GetObjectExplorerTreeView()
-        {
-            var objectExplorerService = (IObjectExplorerService)GetService(typeof(IObjectExplorerService));
-            if (objectExplorerService != null)
-            {
-                var oesTreeProperty = objectExplorerService.GetType().GetProperty("Tree", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.IgnoreCase);
-                if (oesTreeProperty != null)
-                    return (TreeView)oesTreeProperty.GetValue(objectExplorerService, null);
-                else
-                    debug_message("Object Explorer Tree property not found.");
-            }
-            else
-                debug_message("objectExplorerService == null");
-
-            return null;
         }
 
         /// <summary>
@@ -162,12 +161,12 @@ namespace SsmsSchemaFolders
                 // uses node.Tag to prevent this running again on already orgainsed schema folder
                 if (node != null && node.Parent != null && (node.Tag == null || node.Tag.ToString() != "SchemaFolder"))
                 {
-                    INodeInformation ni = _objectExplorerExtender.GetNodeInformation(node);
-                    if (ni != null && !string.IsNullOrEmpty(ni.UrnPath))
+                    var urnPath = _objectExplorerExtender.GetNodeUrnPath(node);
+                    if (!string.IsNullOrEmpty(urnPath))
                     {
-                        debug_message(String.Format("NodeInformation\n UrnPath:{0}\n Name:{1}\n InvariantName:{2}\n Context:{3}\n NavigationContext:{4}", ni.UrnPath, ni.Name, ni.InvariantName, ni.Context, ni.NavigationContext));
+                        //debug_message(String.Format("NodeInformation\n UrnPath:{0}\n Name:{1}\n InvariantName:{2}\n Context:{3}\n NavigationContext:{4}", ni.UrnPath, ni.Name, ni.InvariantName, ni.Context, ni.NavigationContext));
                         
-                        switch (ni.UrnPath)
+                        switch (urnPath)
                         {
                             case "Server/Database/UserTablesFolder":
                             case "Server/Database/ViewsFolder":
@@ -210,8 +209,7 @@ namespace SsmsSchemaFolders
                 if (!Options.Enabled)
                     return;
 
-                var lazyNode = e.Node as ILazyLoadingNode;
-                if (lazyNode != null && lazyNode.Expanding)
+                if (_objectExplorerExtender.GetNodeExpanding(e.Node))
                 {
                     debug_message("node.Expanding");
                     Application.DoEvents();

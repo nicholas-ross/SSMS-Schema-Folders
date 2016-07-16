@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 //using System.Text.RegularExpressions;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace SsmsSchemaFolders
@@ -13,18 +14,41 @@ namespace SsmsSchemaFolders
     {
 
         private ISchemaFolderOptions Options { get; }
+        private IServiceProvider Package { get; }
         //private Regex NodeSchemaRegex;
 
 
         /// <summary>
         /// 
         /// </summary>
-        public ObjectExplorerExtender(ISchemaFolderOptions options)
+        public ObjectExplorerExtender(IServiceProvider package, ISchemaFolderOptions options)
         {
+            Package = package;
             Options = options;
             //NodeSchemaRegex = new Regex(@"@Schema='((''|[^'])+)'");
         }
 
+
+        /// <summary>
+        /// Gets the underlying object which is responsible for displaying object explorer structure
+        /// </summary>
+        /// <returns></returns>
+        public TreeView GetObjectExplorerTreeView()
+        {
+            var objectExplorerService = (IObjectExplorerService)Package.GetService(typeof(IObjectExplorerService));
+            if (objectExplorerService != null)
+            {
+                var oesTreeProperty = objectExplorerService.GetType().GetProperty("Tree", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.IgnoreCase);
+                if (oesTreeProperty != null)
+                    return (TreeView)oesTreeProperty.GetValue(objectExplorerService, null);
+                //else
+                //    debug_message("Object Explorer Tree property not found.");
+            }
+            //else
+            //    debug_message("objectExplorerService == null");
+
+            return null;
+        }
 
         /// <summary>
         /// Gets node information from underlying type of tree node view
@@ -32,7 +56,7 @@ namespace SsmsSchemaFolders
         /// <param name="node"></param>
         /// <returns></returns>
         /// <remarks>Copy of private method in ObjectExplorerService</remarks>
-        public INodeInformation GetNodeInformation(TreeNode node)
+        private INodeInformation GetNodeInformation(TreeNode node)
         {
             INodeInformation result = null;
             IServiceProvider serviceProvider = node as IServiceProvider;
@@ -41,6 +65,24 @@ namespace SsmsSchemaFolders
                 result = (serviceProvider.GetService(typeof(INodeInformation)) as INodeInformation);
             }
             return result;
+        }
+
+        public bool GetNodeExpanding(TreeNode node)
+        {
+            var lazyNode = node as ILazyLoadingNode;
+            if (lazyNode != null)
+                return lazyNode.Expanding;
+            else
+                return false;
+        }
+
+        public string GetNodeUrnPath(TreeNode node)
+        {
+            var ni = GetNodeInformation(node);
+            if (ni != null)
+                return ni.UrnPath;
+            else
+                return null;
         }
 
         private String GetNodeSchema(TreeNode node)

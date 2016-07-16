@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsmsSchemaFolders.2014", "S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsmsSchemaFolders.2012", "SsmsSchemaFolders.2012.csproj", "{9C9FA743-0D5D-4847-9544-3AD0FFBAD79F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsmsSchemaFolders.Interfaces", "SsmsSchemaFolders.Interfaces\SsmsSchemaFolders.Interfaces.csproj", "{7D308A5E-267F-4AC6-B4AC-D6D94F93BBEB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsmsSchemaFolders.Interfaces", "SsmsSchemaFolders.Interfaces.csproj", "{7D308A5E-267F-4AC6-B4AC-D6D94F93BBEB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsmsSchemaFolders.VSPackage", "SsmsSchemaFolders.VSPackage.csproj", "{BF0BA7D7-D1EC-4E73-A5B4-0359D10F4740}"
 EndProject

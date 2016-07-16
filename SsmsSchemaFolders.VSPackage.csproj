@@ -37,7 +37,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\SsmsSchemaFolders2012\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -47,7 +47,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\SsmsSchemaFolders2012\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -55,23 +55,27 @@
     <DeployExtension>False</DeployExtension>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="ObjectExplorerExtender.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SchemaFolderOptions.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="SchemaFolderTreeNode.cs" />
     <Compile Include="SsmsSchemaFoldersPackage.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Key.snk" />
     <None Include="packages.config" />
-    <None Include="README.md" />
+    <None Include="README.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="SkipLoading.2012.reg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="SkipLoading.2014.reg" />
-    <None Include="SkipLoading.2016.reg" />
+    <None Include="SkipLoading.2014.reg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="SkipLoading.2016.reg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
@@ -125,16 +129,19 @@
     <ProjectReference Include="SsmsSchemaFolders.2012.csproj">
       <Project>{9c9fa743-0d5d-4847-9544-3ad0ffbad79f}</Project>
       <Name>SsmsSchemaFolders.2012</Name>
+      <Aliases>Ssms2012</Aliases>
     </ProjectReference>
     <ProjectReference Include="SsmsSchemaFolders.2014.csproj">
       <Project>{d733f495-4f0c-45f1-b839-a29f470a3e4d}</Project>
       <Name>SsmsSchemaFolders.2014</Name>
+      <Aliases>Ssms2014</Aliases>
     </ProjectReference>
     <ProjectReference Include="SsmsSchemaFolders.2016.csproj">
       <Project>{6ea9a0dd-d6b6-434a-b67b-f92e12b005f7}</Project>
       <Name>SsmsSchemaFolders.2016</Name>
+      <Aliases>Ssms2016</Aliases>
     </ProjectReference>
-    <ProjectReference Include="SsmsSchemaFolders.Interfaces\SsmsSchemaFolders.Interfaces.csproj">
+    <ProjectReference Include="SsmsSchemaFolders.Interfaces.csproj">
       <Project>{7d308a5e-267f-4ac6-b4ac-d6d94f93bbeb}</Project>
       <Name>SsmsSchemaFolders.Interfaces</Name>
     </ProjectReference>
