@@ -1,8 +1,6 @@
 ﻿extern alias Ssms2012;
 extern alias Ssms2014;
 extern alias Ssms2016;
-//using Microsoft.SqlServer.Management.UI.VSIntegration;
-//using Microsoft.SqlServer.Management.UI.VSIntegration.ObjectExplorer;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using System;
@@ -10,7 +8,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-//using Ssms2016 = Ssms2016::SsmsSchemaFolders;
 
 namespace SsmsSchemaFolders
 {
@@ -128,7 +125,7 @@ namespace SsmsSchemaFolders
                 var assemblyName = assembly.GetName();
                 //debug_message(assemblyName.Name + ":" + assemblyName.Version.ToString());
 
-                if (assemblyName.Name == "SqlWorkbench.Interfaces") // && BitConverter.ToString(name.GetPublicKeyToken()) == "89-84-5D-CD-80-80-CC-91")
+                if (assemblyName.Name == "SqlWorkbench.Interfaces") // && BitConverter.ToString(name.GetPublicKeyToken()) == "89-84-5D-CD-80-80-CC-91") //SsmsPublicKeyToken
                 {
 
                     switch (assemblyName.Version.ToString())
@@ -231,7 +228,14 @@ namespace SsmsSchemaFolders
                 if (_objectExplorerExtender.GetNodeExpanding(e.Node))
                 {
                     debug_message("node.Expanding");
-                    Application.DoEvents();
+                    // waitCount required for how single core cpu's handle Application.DoEvents().
+                    var waitCount = 0;
+                    while (waitCount < 10000 && _objectExplorerExtender.GetNodeExpanding(e.Node))
+                    {
+                        Application.DoEvents();
+                        waitCount++;
+                    }
+                    debug_message(String.Format("waitCount:{0}", waitCount));
                     debug_message(String.Format("Node.Count:{0}", e.Node.GetNodeCount(false)));
                 }
 
@@ -253,7 +257,7 @@ namespace SsmsSchemaFolders
             debug_message("\nObjectExplorerTreeViewBeforeExpandCallback");
             try
             {
-                debug_message(String.Format("Node.Count:{0}",e.Node.GetNodeCount(false)));
+                debug_message(String.Format("Node.Count:{0}", e.Node.GetNodeCount(false)));
 
                 if (!Options.Enabled)
                     return;
