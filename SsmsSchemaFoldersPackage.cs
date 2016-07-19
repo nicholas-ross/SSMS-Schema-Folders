@@ -5,7 +5,7 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
@@ -40,6 +40,7 @@ namespace SsmsSchemaFolders
         /// SsmsSchemaFoldersPackage GUID string.
         /// </summary>
         public const string PackageGuidString = "a88a775f-7c86-4a09-b5a6-890c4c38261b";
+        public static readonly Guid PackageGuid = new Guid(SsmsSchemaFoldersPackage.PackageGuidString);
 
         public SchemaFolderOptions Options { get; set; }
         
@@ -86,7 +87,8 @@ namespace SsmsSchemaFolders
 
             _objectExplorerExtender = GetObjectExplorerExtender();
 
-            AttachTreeViewEvents();
+            if (_objectExplorerExtender != null)
+                AttachTreeViewEvents();
 
             // Reg setting is removed after initialize. Wait short delay then recreate it.
             DelayAddSkipLoadingReg();
@@ -120,37 +122,42 @@ namespace SsmsSchemaFolders
 
         private IObjectExplorerExtender GetObjectExplorerExtender()
         {
-            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+            try
             {
-                var assemblyName = assembly.GetName();
-                //debug_message(assemblyName.Name + ":" + assemblyName.Version.ToString());
+                var ssmsInterfacesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SqlWorkbench.Interfaces.dll");
 
-                if (assemblyName.Name == "SqlWorkbench.Interfaces") // && BitConverter.ToString(name.GetPublicKeyToken()) == "89-84-5D-CD-80-80-CC-91") //SsmsPublicKeyToken
+                if (File.Exists(ssmsInterfacesPath))
                 {
+                    var ssmsInterfacesVersion = System.Diagnostics.FileVersionInfo.GetVersionInfo(ssmsInterfacesPath);
 
-                    switch (assemblyName.Version.ToString())
+                    switch (ssmsInterfacesVersion.FileMajorPart)
                     {
-                        case "13.0.0.0":
+                        case 13:
                             debug_message("SsmsVersion:2016");
                             return new Ssms2016::SsmsSchemaFolders.ObjectExplorerExtender(this, Options);
 
-                        case "12.0.0.0":
+                        case 12:
                             debug_message("SsmsVersion:2014");
                             return new Ssms2014::SsmsSchemaFolders.ObjectExplorerExtender(this, Options);
 
-                        case "11.0.0.0":
+                        case 11:
                             debug_message("SsmsVersion:2012");
                             return new Ssms2012::SsmsSchemaFolders.ObjectExplorerExtender(this, Options);
 
                         default:
-                            debug_message("SqlWorkbench.Interfaces:" + assemblyName.Version.ToString());
+                            ActivityLogEntry(__ACTIVITYLOG_ENTRYTYPE.ALE_INFORMATION, String.Format("SqlWorkbench.Interfaces.dll v{0}:{1}", ssmsInterfacesVersion.FileMajorPart, ssmsInterfacesVersion.FileMinorPart));
                             break;
                     }
                 }
-            }
 
-            debug_message("Unknown SSMS Version. Defaulting to 2016.");
-            return new Ssms2016::SsmsSchemaFolders.ObjectExplorerExtender(this, Options);
+                ActivityLogEntry(__ACTIVITYLOG_ENTRYTYPE.ALE_WARNING, "Unknown SSMS Version. Defaulting to 2016.");
+                return new Ssms2016::SsmsSchemaFolders.ObjectExplorerExtender(this, Options);
+            }
+            catch (Exception ex)
+            {
+                ActivityLogEntry(__ACTIVITYLOG_ENTRYTYPE.ALE_ERROR, ex.ToString());
+                return null;
+            }
         }
 
         private void AttachTreeViewEvents()
@@ -162,7 +169,7 @@ namespace SsmsSchemaFolders
                 treeView.AfterExpand += new TreeViewEventHandler(ObjectExplorerTreeViewAfterExpandCallback);
             }
             else
-                debug_message("Object Explorer TreeView == null");
+                ActivityLogEntry(__ACTIVITYLOG_ENTRYTYPE.ALE_ERROR, "Object Explorer TreeView == null");
         }
 
         /// <summary>
@@ -204,7 +211,7 @@ namespace SsmsSchemaFolders
             }
             catch (Exception ex)
             {
-                debug_message(ex.ToString());
+                ActivityLogEntry(__ACTIVITYLOG_ENTRYTYPE.ALE_ERROR, ex.ToString());
             }
         }
 
@@ -243,7 +250,7 @@ namespace SsmsSchemaFolders
             }
             catch (Exception ex)
             {
-                debug_message(ex.ToString());
+                ActivityLogEntry(__ACTIVITYLOG_ENTRYTYPE.ALE_ERROR, ex.ToString());
             }
         }
 
@@ -269,7 +276,7 @@ namespace SsmsSchemaFolders
             }
             catch (Exception ex)
             {
-                debug_message(ex.ToString());
+                ActivityLogEntry(__ACTIVITYLOG_ENTRYTYPE.ALE_ERROR, ex.ToString());
             }
             
         }
@@ -281,15 +288,22 @@ namespace SsmsSchemaFolders
                 _outputWindowPane.OutputString(message);
                 _outputWindowPane.OutputString("\r\n");
             }
-            /*
-            VsShellUtilities.ShowMessageBox(
-                this,
+        }
+
+        private void ActivityLogEntry(__ACTIVITYLOG_ENTRYTYPE entryType, string message)
+        {
+            debug_message(message);
+
+            // Logs to %AppData%\Microsoft\VisualStudio\14.0\ActivityLog.XML.
+            // Recommended to obtain the activity log just before writing to it. Do not cache or save the activity log for future use.
+            var log = GetService(typeof(SVsActivityLog)) as IVsActivityLog;
+            if (log == null) return;
+
+            int hr = log.LogEntryGuid(
+                (UInt32)entryType,
+                this.ToString(),
                 message,
-                "Schema Folders",
-                OLEMSGICON.OLEMSGICON_INFO,
-                OLEMSGBUTTON.OLEMSGBUTTON_OK,
-                OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
-            // */
+                SsmsSchemaFoldersPackage.PackageGuid);
         }
 
     }
