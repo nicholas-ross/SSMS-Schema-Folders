@@ -126,19 +126,19 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="SsmsSchemaFolders.2012.csproj">
+    <ProjectReference Include="SsmsSchemaFolders.Ssms2012.csproj">
       <Project>{9c9fa743-0d5d-4847-9544-3ad0ffbad79f}</Project>
-      <Name>SsmsSchemaFolders.2012</Name>
+      <Name>SsmsSchemaFolders.Ssms2012</Name>
       <Aliases>Ssms2012</Aliases>
     </ProjectReference>
-    <ProjectReference Include="SsmsSchemaFolders.2014.csproj">
+    <ProjectReference Include="SsmsSchemaFolders.Ssms2014.csproj">
       <Project>{d733f495-4f0c-45f1-b839-a29f470a3e4d}</Project>
-      <Name>SsmsSchemaFolders.2014</Name>
+      <Name>SsmsSchemaFolders.Ssms2014</Name>
       <Aliases>Ssms2014</Aliases>
     </ProjectReference>
-    <ProjectReference Include="SsmsSchemaFolders.2016.csproj">
+    <ProjectReference Include="SsmsSchemaFolders.Ssms2016.csproj">
       <Project>{6ea9a0dd-d6b6-434a-b67b-f92e12b005f7}</Project>
-      <Name>SsmsSchemaFolders.2016</Name>
+      <Name>SsmsSchemaFolders.Ssms2016</Name>
       <Aliases>Ssms2016</Aliases>
     </ProjectReference>
     <ProjectReference Include="SsmsSchemaFolders.Interfaces.csproj">
