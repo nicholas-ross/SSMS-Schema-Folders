@@ -8,8 +8,8 @@ Source code, documentation and issues can be found at <http://SsmsSchemaFolders.
 
 ## Install
 
-Copy the appropriate version of the SsmsSchemaFolders folder into the SSMS extension folder. Replace or remove any previous version.
-Run the included reg file in the folder to skip the load error.
+Copy this folder into the SSMS extension folder. Remove or replace any previous version.
+Run the included reg file to skip the load error.
 
 * 2012 - `C:\Program Files (x86)\Microsoft SQL Server\110\Tools\Binn\ManagementStudio\Extensions`
 * 2014 - `C:\Program Files (x86)\Microsoft SQL Server\120\Tools\Binn\ManagementStudio\Extensions`
