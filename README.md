@@ -42,6 +42,11 @@ Please report any issues to <http://ssmsschemafolders.codeplex.com/workitem/list
 
 ## Change Log
 
+### v1.2 (TBA)
+* No new features.
+* Single deployable version for multiple SSMS versions.
+* Fixed: Folder expanding wait time on single core cpu.
+
 ### v1.1 (2016-07-14)
 * Added user options.
 * Fixed: Error when running mulitple SSMS instances. (#1)
