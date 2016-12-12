@@ -1,6 +1,7 @@
 ﻿extern alias Ssms2012;
 extern alias Ssms2014;
 extern alias Ssms2016;
+extern alias Ssms2017;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using System;
@@ -132,6 +133,10 @@ namespace SsmsSchemaFolders
 
                     switch (ssmsInterfacesVersion.FileMajorPart)
                     {
+                        case 14:
+                            debug_message("SsmsVersion:2017");
+                            return new Ssms2017::SsmsSchemaFolders.ObjectExplorerExtender(this, Options);
+
                         case 13:
                             debug_message("SsmsVersion:2016");
                             return new Ssms2016::SsmsSchemaFolders.ObjectExplorerExtender(this, Options);

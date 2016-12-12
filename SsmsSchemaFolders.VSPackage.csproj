@@ -76,6 +76,9 @@
     <None Include="SkipLoading.2016.reg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="SkipLoading.2017.reg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
@@ -144,6 +147,11 @@
     <ProjectReference Include="SsmsSchemaFolders.Interfaces.csproj">
       <Project>{7d308a5e-267f-4ac6-b4ac-d6d94f93bbeb}</Project>
       <Name>SsmsSchemaFolders.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="SsmsSchemaFolders.Ssms2017.csproj">
+      <Project>{8442f331-ce3e-4fa2-ba00-d0afd5243fec}</Project>
+      <Name>SsmsSchemaFolders.Ssms2017</Name>
+      <Aliases>Ssms2017</Aliases>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
