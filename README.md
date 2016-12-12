@@ -14,6 +14,7 @@ Run the included reg file to skip the load error.
 * 2012 - `C:\Program Files (x86)\Microsoft SQL Server\110\Tools\Binn\ManagementStudio\Extensions`
 * 2014 - `C:\Program Files (x86)\Microsoft SQL Server\120\Tools\Binn\ManagementStudio\Extensions`
 * 2016 - `C:\Program Files (x86)\Microsoft SQL Server\130\Tools\Binn\ManagementStudio\Extensions`
+* 2017 - `C:\Program Files (x86)\Microsoft SQL Server\140\Tools\Binn\ManagementStudio\Extensions`
 
 Depending on your web browser, you may need to unblock the zip file before extracting.
 Right click on the zip file and select Properties. 
@@ -42,8 +43,9 @@ Please report any issues to <http://ssmsschemafolders.codeplex.com/workitem/list
 
 ## Change Log
 
-### v1.2 (TBA)
-* No new features.
+### v1.2 (2016-12-12)
+* Added support for v17.0 RC1.
+* Show wait cursor while creating folders.
 * Single deployable version for multiple SSMS versions.
 * Fixed: Folder expanding wait time on single core cpu.
 
