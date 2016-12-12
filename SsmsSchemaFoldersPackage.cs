@@ -205,7 +205,9 @@ namespace SsmsSchemaFolders
                             case "Server/Database/SystemTablesFolder":
                             case "Server/Database/SystemViewsFolder":
                             case "Server/Database/SystemStoredProceduresFolder":
+                                node.TreeView.Cursor = Cursors.WaitCursor;
                                 _objectExplorerExtender.ReorganizeNodes(node, "SchemaFolder");
+                                node.TreeView.Cursor = Cursors.Default;
                                 break;
 
                             default:
