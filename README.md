@@ -43,6 +43,9 @@ Please report any issues to <http://ssmsschemafolders.codeplex.com/workitem/list
 
 ## Change Log
 
+### v1.2.1 (2016-12-22)
+* Fixed: Folder expanding wait time. (#3)
+
 ### v1.2 (2016-12-12)
 * Added support for v17.0 RC1.
 * Show wait cursor while creating folders.
