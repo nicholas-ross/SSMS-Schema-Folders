@@ -242,10 +242,9 @@ namespace SsmsSchemaFolders
                 if (_objectExplorerExtender.GetNodeExpanding(e.Node))
                 {
                     debug_message("node.Expanding");
-                    // waitCount required for how single core cpu's handle Application.DoEvents().
                     var waitCount = 0;
-                    while (waitCount < 10000 && _objectExplorerExtender.GetNodeExpanding(e.Node))
-                    {
+                    while (_objectExplorerExtender.GetNodeExpanding(e.Node) && waitCount < Int32.MaxValue)
+                        {
                         Application.DoEvents();
                         waitCount++;
                     }
