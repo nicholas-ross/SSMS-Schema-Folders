@@ -192,7 +192,7 @@ namespace SsmsSchemaFolders
                     var urnPath = _objectExplorerExtender.GetNodeUrnPath(node);
                     if (!string.IsNullOrEmpty(urnPath))
                     {
-                        //debug_message(String.Format("NodeInformation\n UrnPath:{0}\n Name:{1}\n InvariantName:{2}\n Context:{3}\n NavigationContext:{4}", ni.UrnPath, ni.Name, ni.InvariantName, ni.Context, ni.NavigationContext));
+                        //debug_message("NodeInformation\n UrnPath:{0}\n Name:{1}\n InvariantName:{2}\n Context:{3}\n NavigationContext:{4}", ni.UrnPath, ni.Name, ni.InvariantName, ni.Context, ni.NavigationContext);
                         
                         switch (urnPath)
                         {
@@ -234,7 +234,7 @@ namespace SsmsSchemaFolders
             // Wait for the async node expand to finish or we could miss nodes
             try
             {
-                debug_message(String.Format("Node.Count:{0}", e.Node.GetNodeCount(false)));
+                debug_message("Node.Count:{0}", e.Node.GetNodeCount(false));
 
                 if (!Options.Enabled)
                     return;
@@ -248,8 +248,8 @@ namespace SsmsSchemaFolders
                         Application.DoEvents();
                         waitCount++;
                     }
-                    debug_message(String.Format("waitCount:{0}", waitCount));
-                    debug_message(String.Format("Node.Count:{0}", e.Node.GetNodeCount(false)));
+                    debug_message("waitCount:{0}", waitCount);
+                    debug_message("Node.Count:{0}", e.Node.GetNodeCount(false));
                 }
 
                 ReorganizeFolders(e.Node);
@@ -270,7 +270,7 @@ namespace SsmsSchemaFolders
             debug_message("\nObjectExplorerTreeViewBeforeExpandCallback");
             try
             {
-                debug_message(String.Format("Node.Count:{0}", e.Node.GetNodeCount(false)));
+                debug_message("Node.Count:{0}", e.Node.GetNodeCount(false));
 
                 if (!Options.Enabled)
                     return;
@@ -292,6 +292,15 @@ namespace SsmsSchemaFolders
             if (_outputWindowPane != null)
             {
                 _outputWindowPane.OutputString(message);
+                _outputWindowPane.OutputString("\r\n");
+            }
+        }
+
+        private void debug_message(string message, params object[] args)
+        {
+            if (_outputWindowPane != null)
+            {
+                _outputWindowPane.OutputString(String.Format(message, args));
                 _outputWindowPane.OutputString("\r\n");
             }
         }
