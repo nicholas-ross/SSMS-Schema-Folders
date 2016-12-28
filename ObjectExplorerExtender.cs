@@ -108,7 +108,7 @@ namespace SsmsSchemaFolders
         /// </summary>
         /// <param name="node">Table node to reorganize</param>
         /// <param name="nodeTag">Tag of new node</param>
-        public void ReorganizeNodes(TreeNode node, string nodeTag)
+        public int ReorganizeNodes(TreeNode node, string nodeTag)
         {
             var nodesToMove = new List<KeyValuePair<string, List<TreeNode>>>();
             var createNodes = new List<KeyValuePair<string, TreeNode>>();
@@ -131,7 +131,7 @@ namespace SsmsSchemaFolders
                     nodesToMove.Add(kvpNodesToMove);
             }
 
-            DoReorganization(node, nodesToMove, createNodes, nodeTag);
+            return DoReorganization(node, nodesToMove, createNodes, nodeTag);
         }
 
 
@@ -142,10 +142,10 @@ namespace SsmsSchemaFolders
         /// <param name="nodesToMove">nodes to move</param>
         /// <param name="createNodes">nodes to create</param>
         /// <param name="nodeTag">tag for created nodes</param>
-        private void DoReorganization(TreeNode parentNode, List<KeyValuePair<string, List<TreeNode>>> nodesToMove, List<KeyValuePair<string, TreeNode>> createNodes, string nodeTag)
+        private int DoReorganization(TreeNode parentNode, List<KeyValuePair<string, List<TreeNode>>> nodesToMove, List<KeyValuePair<string, TreeNode>> createNodes, string nodeTag)
         {
             if (createNodes == null)
-                return;
+                return 0;
 
             var imageIndex = parentNode.ImageIndex;
             if (Options.UseObjectIcon && parentNode.Nodes.Count > 0)
@@ -187,7 +187,7 @@ namespace SsmsSchemaFolders
             }
 
             if (nodesToMove == null)
-                return;
+                return createNodes.Count;
 
             for (int i = nodesToMove.Count - 1; i > -1; i--)
             {
@@ -212,6 +212,8 @@ namespace SsmsSchemaFolders
                     }
                 }
             }
+
+            return createNodes.Count;
         }
 
         private TreeNode CreateChildTreeNodeWithMenu(TreeNode parent)

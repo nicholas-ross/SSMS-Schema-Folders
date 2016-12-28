@@ -43,6 +43,8 @@ namespace SsmsSchemaFolders
         public const string PackageGuidString = "a88a775f-7c86-4a09-b5a6-890c4c38261b";
         public static readonly Guid PackageGuid = new Guid(SsmsSchemaFoldersPackage.PackageGuidString);
 
+        public const string SchemaFolderNodeTag = "SchemaFolder";
+
         public SchemaFolderOptions Options { get; set; }
         
         private IObjectExplorerExtender _objectExplorerExtender;
@@ -181,13 +183,13 @@ namespace SsmsSchemaFolders
         /// Adds new nodes and move items between them
         /// </summary>
         /// <param name="node"></param>
-        private void ReorganizeFolders(TreeNode node)
+        private void ReorganizeFolders(TreeNode node, bool expand = false)
         {
             debug_message("ReorganizeFolders");
             try
             {
                 // uses node.Tag to prevent this running again on already orgainsed schema folder
-                if (node != null && node.Parent != null && (node.Tag == null || node.Tag.ToString() != "SchemaFolder"))
+                if (node != null && node.Parent != null && (node.Tag == null || node.Tag.ToString() != SchemaFolderNodeTag))
                 {
                     var urnPath = _objectExplorerExtender.GetNodeUrnPath(node);
                     if (!string.IsNullOrEmpty(urnPath))
@@ -206,7 +208,11 @@ namespace SsmsSchemaFolders
                             case "Server/Database/SystemViewsFolder":
                             case "Server/Database/SystemStoredProceduresFolder":
                                 node.TreeView.Cursor = Cursors.WaitCursor;
-                                _objectExplorerExtender.ReorganizeNodes(node, "SchemaFolder");
+                                var schemaFolderCount = _objectExplorerExtender.ReorganizeNodes(node, SchemaFolderNodeTag);
+                                if (expand && schemaFolderCount == 1)
+                                {
+                                    node.LastNode.Expand();
+                                }
                                 node.TreeView.Cursor = Cursors.Default;
                                 break;
 
@@ -252,7 +258,7 @@ namespace SsmsSchemaFolders
                     debug_message("Node.Count:{0}", e.Node.GetNodeCount(false));
                 }
 
-                ReorganizeFolders(e.Node);
+                ReorganizeFolders(e.Node, true);
             }
             catch (Exception ex)
             {
