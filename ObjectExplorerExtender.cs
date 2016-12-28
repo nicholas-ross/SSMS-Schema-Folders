@@ -63,6 +63,7 @@ namespace SsmsSchemaFolders
             if (serviceProvider != null)
             {
                 result = (serviceProvider.GetService(typeof(INodeInformation)) as INodeInformation);
+                //debug_message("NodeInformation\n UrnPath:{0}\n Name:{1}\n InvariantName:{2}\n Context:{3}\n NavigationContext:{4}", ni.UrnPath, ni.Name, ni.InvariantName, ni.Context, ni.NavigationContext);
             }
             return result;
         }
@@ -104,11 +105,110 @@ namespace SsmsSchemaFolders
         }
 
         /// <summary>
+        /// Create schema nodes and move tables, functions and stored procedures under its schema node
+        /// </summary>
+        /// <param name="node">Table node to reorganize</param>
+        /// <param name="nodeTag">Tag of new node</param>
+        /// <returns>The count of schema nodes.</returns>
+        public int ReorganizeNodes(TreeNode node, string nodeTag)
+        {
+            debug_message("ReorganizeNodes");
+
+            if (node.Nodes.Count <= 1)
+                return 0;
+
+            debug_message(DateTime.Now.ToString("ss.fff"));
+
+            node.TreeView.BeginUpdate();
+
+            //can't move nodes while iterating forward over them
+            //create list of nodes to move then perform the update
+
+            var schemas = new Dictionary<String, List<TreeNode>>();
+
+            foreach (TreeNode childNode in node.Nodes)
+            {
+                //skip schema node folders but make sure they are in schemas list
+                if (childNode.Tag != null && childNode.Tag.ToString() == nodeTag)
+                {
+                    if (!schemas.ContainsKey(childNode.Name))
+                        schemas.Add(childNode.Name, new List<TreeNode>());
+
+                    continue;
+                }
+
+                var schema = GetNodeSchema(childNode);
+
+                if (string.IsNullOrEmpty(schema))
+                    continue;
+
+                //create schema node
+                if (!node.Nodes.ContainsKey(schema))
+                {
+                    TreeNode schemaNode;
+                    if (Options.CloneParentNode)
+                    {
+                        schemaNode = new SchemaFolderTreeNode(node);
+                        node.Nodes.Add(schemaNode);
+                    }
+                    else
+                    {
+                        schemaNode = node.Nodes.Add(schema);
+                    }
+
+                    schemaNode.Name = schema;
+                    schemaNode.Text = schema;
+                    schemaNode.Tag = nodeTag;
+
+                    if (Options.AppendDot)
+                        schemaNode.Text += ".";
+
+                    if (Options.UseObjectIcon)
+                    {
+                        schemaNode.ImageIndex = childNode.ImageIndex;
+                        schemaNode.SelectedImageIndex = childNode.ImageIndex;
+                    }
+                    else
+                    {
+                        schemaNode.ImageIndex = node.ImageIndex;
+                        schemaNode.SelectedImageIndex = node.ImageIndex;
+                    }
+                }
+
+                //add node to schema list
+                List<TreeNode> schemaNodeList;
+                if (!schemas.TryGetValue(schema, out schemaNodeList))
+                {
+                    schemaNodeList = new List<TreeNode>();
+                    schemas.Add(schema, schemaNodeList);
+                }
+                schemaNodeList.Add(childNode);
+            }
+
+            //move nodes to schema node
+            foreach (string schema in schemas.Keys)
+            {
+                var schemaNode = node.Nodes[schema];
+                foreach (TreeNode childNode in schemas[schema])
+                {
+                    node.Nodes.Remove(childNode);
+                    schemaNode.Nodes.Add(childNode);
+                }
+            }
+
+            node.TreeView.EndUpdate();
+
+            debug_message(DateTime.Now.ToString("ss.fff"));
+
+            return schemas.Count;
+        }
+
+        /// <summary>
         /// Create schema nodes and move tables under its schema node, functions and stored procedures
         /// </summary>
         /// <param name="node">Table node to reorganize</param>
         /// <param name="nodeTag">Tag of new node</param>
-        public int ReorganizeNodes(TreeNode node, string nodeTag)
+        public int ReorganizeNodes_old(TreeNode node, string nodeTag)
         {
             debug_message("ReorganizeNodes");
             debug_message(DateTime.Now.ToString("ss.fff"));
@@ -250,7 +350,7 @@ namespace SsmsSchemaFolders
 
             return createNodes.Count;
         }
-
+        
         private TreeNode CreateChildTreeNodeWithMenu(TreeNode parent)
         {
             var node = new SchemaFolderTreeNode(parent);
