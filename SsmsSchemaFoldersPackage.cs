@@ -194,8 +194,6 @@ namespace SsmsSchemaFolders
                     var urnPath = _objectExplorerExtender.GetNodeUrnPath(node);
                     if (!string.IsNullOrEmpty(urnPath))
                     {
-                        //debug_message("NodeInformation\n UrnPath:{0}\n Name:{1}\n InvariantName:{2}\n Context:{3}\n NavigationContext:{4}", ni.UrnPath, ni.Name, ni.InvariantName, ni.Context, ni.NavigationContext);
-                        
                         switch (urnPath)
                         {
                             case "Server/Database/UserTablesFolder":
@@ -207,16 +205,17 @@ namespace SsmsSchemaFolders
                             case "Server/Database/SystemTablesFolder":
                             case "Server/Database/SystemViewsFolder":
                             case "Server/Database/SystemStoredProceduresFolder":
-                                node.TreeView.Cursor = Cursors.WaitCursor;
+                                //node.TreeView.Cursor = Cursors.WaitCursor;
                                 var schemaFolderCount = _objectExplorerExtender.ReorganizeNodes(node, SchemaFolderNodeTag);
                                 if (expand && schemaFolderCount == 1)
                                 {
                                     node.LastNode.Expand();
                                 }
-                                node.TreeView.Cursor = Cursors.Default;
+                                //node.TreeView.Cursor = Cursors.Default;
                                 break;
 
                             default:
+                                debug_message(urnPath);
                                 break;
                         }
                     }
@@ -245,22 +244,66 @@ namespace SsmsSchemaFolders
                 if (!Options.Enabled)
                     return;
 
+                if (e.Node.TreeView.InvokeRequired)
+                    debug_message("TreeView.InvokeRequired");
+
+                //2016 node is always expanding on first open. Is this the same for other versions?
+
                 if (_objectExplorerExtender.GetNodeExpanding(e.Node))
                 {
                     debug_message("node.Expanding");
                     debug_message(DateTime.Now.ToString("ss.fff"));
                     var waitCount = 0;
-                    while (_objectExplorerExtender.GetNodeExpanding(e.Node) && waitCount < Int32.MaxValue)
-                        {
-                        Application.DoEvents();
-                        waitCount++;
-                    }
-                    debug_message(DateTime.Now.ToString("ss.fff"));
-                    debug_message("waitCount:{0}", waitCount);
-                    debug_message("Node.Count:{0}", e.Node.GetNodeCount(false));
-                }
+                    //while (_objectExplorerExtender.GetNodeExpanding(e.Node) && waitCount < Int32.MaxValue)
+                    //{
+                    //    Application.DoEvents();
+                    //    waitCount++;
+                    //}
+                    //debug_message("waitCount:{0}", waitCount);
+                    //debug_message("Node.Count:{0}", e.Node.GetNodeCount(false));
 
-                ReorganizeFolders(e.Node, true);
+                    //IExplorerHierarchy.EndAsynchronousUpdate += New EventHandler();
+
+                    //e.Node.TreeView.Cursor = Cursors.WaitCursor;
+                    e.Node.TreeView.Cursor = Cursors.AppStarting;
+
+                    var nodeExpanding = new Timer();
+                    nodeExpanding.Interval = 10;
+                    EventHandler nodeExpandingEvent = null;
+                    //nodeExpandingEvent = delegate (object o, EventArgs e2)
+                    nodeExpandingEvent = (object o, EventArgs e2) =>
+                    {
+                        debug_message("nodeExpanding:{0}", waitCount);
+                        waitCount++;
+                        if (e.Node.TreeView.InvokeRequired)
+                            debug_message("TreeView.InvokeRequired");
+                        debug_message("Node.Count:{0}", e.Node.GetNodeCount(false));
+                        debug_message(DateTime.Now.ToString("ss.fff"));
+
+                        if (!_objectExplorerExtender.GetNodeExpanding(e.Node))
+                        {
+                            nodeExpanding.Tick -= nodeExpandingEvent;
+                            nodeExpanding.Stop();
+                            nodeExpanding.Dispose();
+
+                            ReorganizeFolders(e.Node, true);
+
+                            e.Node.TreeView.Cursor = Cursors.Default;
+                        }
+                        else
+                        {
+                            //ReorganizeFolders(e.Node);
+                        }
+                        //debug_message("Node.Count2:{0}", e.Node.GetNodeCount(false));
+                    };
+                    nodeExpanding.Tick += nodeExpandingEvent;
+                    nodeExpanding.Start();
+
+                }
+                else
+                {
+                    //ReorganizeFolders(e.Node, true);
+                }
             }
             catch (Exception ex)
             {
@@ -278,15 +321,20 @@ namespace SsmsSchemaFolders
             debug_message("\nObjectExplorerTreeViewBeforeExpandCallback");
             try
             {
-                debug_message("Node.Count:{0}", e.Node.GetNodeCount(false));
-
                 if (!Options.Enabled)
                     return;
+
+                debug_message("Node.Count:{0}", e.Node.GetNodeCount(false));
 
                 if (e.Node.GetNodeCount(false) == 1)
                     return;
 
-                ReorganizeFolders(e.Node);
+                if (_objectExplorerExtender.GetNodeExpanding(e.Node))
+                {
+                    debug_message("node.Expanding");
+                    //doing a reorg before expand stops the treeview from jumping
+                    ReorganizeFolders(e.Node);
+                }
             }
             catch (Exception ex)
             {
