@@ -117,7 +117,7 @@ namespace SsmsSchemaFolders
             if (node.Nodes.Count <= 1)
                 return 0;
 
-            debug_message(DateTime.Now.ToString("ss.fff"));
+            //debug_message(DateTime.Now.ToString("ss.fff"));
 
             node.TreeView.BeginUpdate();
 
@@ -185,6 +185,8 @@ namespace SsmsSchemaFolders
                 schemaNodeList.Add(childNode);
             }
 
+            //debug_message(DateTime.Now.ToString("ss.fff"));
+
             //move nodes to schema node
             foreach (string schema in schemas.Keys)
             {
@@ -198,164 +200,9 @@ namespace SsmsSchemaFolders
 
             node.TreeView.EndUpdate();
 
-            debug_message(DateTime.Now.ToString("ss.fff"));
+            //debug_message(DateTime.Now.ToString("ss.fff"));
 
             return schemas.Count;
-        }
-
-        /// <summary>
-        /// Create schema nodes and move tables under its schema node, functions and stored procedures
-        /// </summary>
-        /// <param name="node">Table node to reorganize</param>
-        /// <param name="nodeTag">Tag of new node</param>
-        public int ReorganizeNodes_old(TreeNode node, string nodeTag)
-        {
-            debug_message("ReorganizeNodes");
-            debug_message(DateTime.Now.ToString("ss.fff"));
-
-            var nodesToMove = new List<KeyValuePair<string, List<TreeNode>>>(); //why is kvp value a list?
-            var createNodes = new List<KeyValuePair<string, TreeNode>>();
-
-            for (int i = node.Nodes.Count - 1; i > -1; i--)
-            {
-                var tn = node.Nodes[i];
-                string schema = GetNodeSchema(tn);
-                if (string.IsNullOrEmpty(schema))
-                    continue;
-
-                var kvpCreateNd = new KeyValuePair<string, TreeNode>(schema, null);
-                var kvpNodesToMove = new KeyValuePair<string, List<TreeNode>>(schema, new List<TreeNode>());
-                kvpNodesToMove.Value.Add(tn);
-
-                if (!createNodes.Contains(kvpCreateNd))
-                    createNodes.Add(kvpCreateNd);
-
-                if (!nodesToMove.Contains(kvpNodesToMove))
-                    nodesToMove.Add(kvpNodesToMove);
-            }
-
-            debug_message(DateTime.Now.ToString("ss.fff"));
-
-            return DoReorganization(node, nodesToMove, createNodes, nodeTag);
-        }
-
-
-        /// <summary>
-        /// Reorganizing nodes according to move list and new node list
-        /// </summary>
-        /// <param name="parentNode">parent node</param>
-        /// <param name="nodesToMove">nodes to move</param>
-        /// <param name="createNodes">nodes to create</param>
-        /// <param name="nodeTag">tag for created nodes</param>
-        private int DoReorganization(TreeNode parentNode, List<KeyValuePair<string, List<TreeNode>>> nodesToMove, List<KeyValuePair<string, TreeNode>> createNodes, string nodeTag)
-        {
-            debug_message("DoReorganization");
-
-            if (createNodes == null)
-                return 0;
-
-            var imageIndex = parentNode.ImageIndex;
-            if (Options.UseObjectIcon && parentNode.Nodes.Count > 0)
-            {
-                // First few node icons are usually folders so use icon of last node.
-                //imageIndex = parentNode.Nodes[parentNode.Nodes.Count - 1].ImageIndex;
-                imageIndex = parentNode.LastNode.ImageIndex;
-            }
-
-            debug_message("createNodes.Count:{0}", createNodes.Count);
-            debug_message(DateTime.Now.ToString("ss.fff"));
-
-            for (int createNodeIndex = createNodes.Count - 1; createNodeIndex > -1; createNodeIndex--)
-            {
-                var kvp = createNodes[createNodeIndex];
-                if (kvp.Value == null)
-                {
-                    if (parentNode.Nodes.ContainsKey(kvp.Key))
-                    {
-                        var kvpNew = new KeyValuePair<string, TreeNode>(kvp.Key, parentNode.Nodes[kvp.Key]);
-                        createNodes[createNodeIndex] = kvpNew;
-                    }
-                    else
-                    {
-                        TreeNode schemaNode;
-                        if (Options.CloneParentNode)
-                            schemaNode = CreateChildTreeNodeWithMenu(parentNode);
-                        else
-                            schemaNode = parentNode.Nodes.Add(kvp.Key, kvp.Key, imageIndex, imageIndex);
-
-                        schemaNode.Name = kvp.Key;
-                        schemaNode.Text = kvp.Key;
-                        if (Options.AppendDot)
-                            schemaNode.Text += ".";
-                        schemaNode.ImageIndex = imageIndex;
-                        schemaNode.SelectedImageIndex = imageIndex;
-                        schemaNode.Tag = nodeTag;
-
-                        var kvpNew = new KeyValuePair<string, TreeNode>(kvp.Key, schemaNode);
-                        createNodes[createNodeIndex] = kvpNew;
-                    }
-                }
-            }
-
-            debug_message(DateTime.Now.ToString("ss.fff"));
-
-            if (nodesToMove == null)
-                return createNodes.Count;
-
-            //parentNode.TreeView.UseWaitCursor = true; //doesn't work
-            //parentNode.TreeView.Cursor = Cursors.WaitCursor;
-            //parentNode.TreeView.Cursor = Cursors.AppStarting;
-            parentNode.TreeView.BeginUpdate();
-            //parentNode.TreeView.SuspendLayout();
-
-            //if (nodesToMove.Count > 100) use timer to execute batches
-
-            debug_message("nodesToMove.Count:{0}", nodesToMove.Count);
-
-            for (int i = nodesToMove.Count - 1; i > -1; i--)
-            {
-                var kvp = nodesToMove[i];
-                if (kvp.Value != null && kvp.Value.Count > 0)
-                {
-                    foreach (var tn in kvp.Value)
-                    {
-                        parentNode.Nodes.Remove(tn);
-                    }
-                    var trnar = new TreeNode[kvp.Value.Count];
-                    for (int j = 0; j < kvp.Value.Count; j++)
-                        trnar[j] = kvp.Value[j];
-
-                    for (int k = createNodes.Count - 1; k > -1; k--)
-                    {
-                        if (createNodes[k].Key.Equals(kvp.Key))
-                        {
-                            createNodes[k].Value.Nodes.AddRange(trnar);
-                            break;
-                        }
-                    }
-                }
-                //update in batches
-                if (i % 100 == 0)
-                {
-                    parentNode.TreeView.EndUpdate();
-                    parentNode.TreeView.BeginUpdate();
-                }
-            }
-
-            parentNode.TreeView.EndUpdate();
-            //parentNode.TreeView.UseWaitCursor = false;
-            //parentNode.TreeView.Cursor = Cursors.Default;
-
-            debug_message(DateTime.Now.ToString("ss.fff"));
-
-            return createNodes.Count;
-        }
-        
-        private TreeNode CreateChildTreeNodeWithMenu(TreeNode parent)
-        {
-            var node = new SchemaFolderTreeNode(parent);
-            parent.Nodes.Add(node);
-            return node;
         }
 
         private void debug_message(string message)

@@ -97,12 +97,6 @@ namespace SsmsSchemaFolders
             DelayAddSkipLoadingReg();
         }
 
-        //protected override int QueryClose(out bool canClose)
-        //{
-        //    AddSkipLoadingReg();
-        //    return base.QueryClose(out canClose);
-        //}
-
         #endregion
 
         private void AddSkipLoadingReg()
@@ -247,20 +241,11 @@ namespace SsmsSchemaFolders
                 if (e.Node.TreeView.InvokeRequired)
                     debug_message("TreeView.InvokeRequired");
 
-                //2016 node is always expanding on first open. Is this the same for other versions?
-
                 if (_objectExplorerExtender.GetNodeExpanding(e.Node))
                 {
                     debug_message("node.Expanding");
-                    debug_message(DateTime.Now.ToString("ss.fff"));
+                    //debug_message(DateTime.Now.ToString("ss.fff"));
                     var waitCount = 0;
-                    //while (_objectExplorerExtender.GetNodeExpanding(e.Node) && waitCount < Int32.MaxValue)
-                    //{
-                    //    Application.DoEvents();
-                    //    waitCount++;
-                    //}
-                    //debug_message("waitCount:{0}", waitCount);
-                    //debug_message("Node.Count:{0}", e.Node.GetNodeCount(false));
 
                     //IExplorerHierarchy.EndAsynchronousUpdate += New EventHandler();
 
@@ -270,7 +255,6 @@ namespace SsmsSchemaFolders
                     var nodeExpanding = new Timer();
                     nodeExpanding.Interval = 10;
                     EventHandler nodeExpandingEvent = null;
-                    //nodeExpandingEvent = delegate (object o, EventArgs e2)
                     nodeExpandingEvent = (object o, EventArgs e2) =>
                     {
                         debug_message("nodeExpanding:{0}", waitCount);
@@ -278,7 +262,7 @@ namespace SsmsSchemaFolders
                         if (e.Node.TreeView.InvokeRequired)
                             debug_message("TreeView.InvokeRequired");
                         debug_message("Node.Count:{0}", e.Node.GetNodeCount(false));
-                        debug_message(DateTime.Now.ToString("ss.fff"));
+                        //debug_message(DateTime.Now.ToString("ss.fff"));
 
                         if (!_objectExplorerExtender.GetNodeExpanding(e.Node))
                         {
