@@ -110,7 +110,10 @@ namespace SsmsSchemaFolders
         /// <param name="nodeTag">Tag of new node</param>
         public int ReorganizeNodes(TreeNode node, string nodeTag)
         {
-            var nodesToMove = new List<KeyValuePair<string, List<TreeNode>>>();
+            debug_message("ReorganizeNodes");
+            debug_message(DateTime.Now.ToString("ss.fff"));
+
+            var nodesToMove = new List<KeyValuePair<string, List<TreeNode>>>(); //why is kvp value a list?
             var createNodes = new List<KeyValuePair<string, TreeNode>>();
 
             for (int i = node.Nodes.Count - 1; i > -1; i--)
@@ -131,6 +134,8 @@ namespace SsmsSchemaFolders
                     nodesToMove.Add(kvpNodesToMove);
             }
 
+            debug_message(DateTime.Now.ToString("ss.fff"));
+
             return DoReorganization(node, nodesToMove, createNodes, nodeTag);
         }
 
@@ -144,6 +149,8 @@ namespace SsmsSchemaFolders
         /// <param name="nodeTag">tag for created nodes</param>
         private int DoReorganization(TreeNode parentNode, List<KeyValuePair<string, List<TreeNode>>> nodesToMove, List<KeyValuePair<string, TreeNode>> createNodes, string nodeTag)
         {
+            debug_message("DoReorganization");
+
             if (createNodes == null)
                 return 0;
 
@@ -151,8 +158,12 @@ namespace SsmsSchemaFolders
             if (Options.UseObjectIcon && parentNode.Nodes.Count > 0)
             {
                 // First few node icons are usually folders so use icon of last node.
-                imageIndex = parentNode.Nodes[parentNode.Nodes.Count - 1].ImageIndex;
+                //imageIndex = parentNode.Nodes[parentNode.Nodes.Count - 1].ImageIndex;
+                imageIndex = parentNode.LastNode.ImageIndex;
             }
+
+            debug_message("createNodes.Count:{0}", createNodes.Count);
+            debug_message(DateTime.Now.ToString("ss.fff"));
 
             for (int createNodeIndex = createNodes.Count - 1; createNodeIndex > -1; createNodeIndex--)
             {
@@ -186,8 +197,20 @@ namespace SsmsSchemaFolders
                 }
             }
 
+            debug_message(DateTime.Now.ToString("ss.fff"));
+
             if (nodesToMove == null)
                 return createNodes.Count;
+
+            //parentNode.TreeView.UseWaitCursor = true; //doesn't work
+            //parentNode.TreeView.Cursor = Cursors.WaitCursor;
+            //parentNode.TreeView.Cursor = Cursors.AppStarting;
+            parentNode.TreeView.BeginUpdate();
+            //parentNode.TreeView.SuspendLayout();
+
+            //if (nodesToMove.Count > 100) use timer to execute batches
+
+            debug_message("nodesToMove.Count:{0}", nodesToMove.Count);
 
             for (int i = nodesToMove.Count - 1; i > -1; i--)
             {
@@ -211,7 +234,19 @@ namespace SsmsSchemaFolders
                         }
                     }
                 }
+                //update in batches
+                if (i % 100 == 0)
+                {
+                    parentNode.TreeView.EndUpdate();
+                    parentNode.TreeView.BeginUpdate();
+                }
             }
+
+            parentNode.TreeView.EndUpdate();
+            //parentNode.TreeView.UseWaitCursor = false;
+            //parentNode.TreeView.Cursor = Cursors.Default;
+
+            debug_message(DateTime.Now.ToString("ss.fff"));
 
             return createNodes.Count;
         }

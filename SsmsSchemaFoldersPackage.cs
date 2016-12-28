@@ -248,12 +248,14 @@ namespace SsmsSchemaFolders
                 if (_objectExplorerExtender.GetNodeExpanding(e.Node))
                 {
                     debug_message("node.Expanding");
+                    debug_message(DateTime.Now.ToString("ss.fff"));
                     var waitCount = 0;
                     while (_objectExplorerExtender.GetNodeExpanding(e.Node) && waitCount < Int32.MaxValue)
                         {
                         Application.DoEvents();
                         waitCount++;
                     }
+                    debug_message(DateTime.Now.ToString("ss.fff"));
                     debug_message("waitCount:{0}", waitCount);
                     debug_message("Node.Count:{0}", e.Node.GetNodeCount(false));
                 }
