@@ -221,6 +221,22 @@ namespace SsmsSchemaFolders
             return node;
         }
 
+        private void debug_message(string message)
+        {
+            if (Package is IDebugOutput)
+            {
+                ((IDebugOutput)Package).debug_message(message);
+            }
+        }
+
+        private void debug_message(string message, params object[] args)
+        {
+            if (Package is IDebugOutput)
+            {
+                ((IDebugOutput)Package).debug_message(message, args);
+            }
+        }
+
     }
 
 }

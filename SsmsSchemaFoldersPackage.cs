@@ -35,7 +35,7 @@ namespace SsmsSchemaFolders
     [ProvideAutoLoad("d114938f-591c-46cf-a785-500a82d97410")] //CommandGuids.ObjectExplorerToolWindowIDString
     [ProvideOptionPage(typeof(SchemaFolderOptions), "SQL Server Object Explorer", "Schema Folders", 114, 116, true)]
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "pkgdef, VS and vsixmanifest are valid VS terms")]
-    public sealed class SsmsSchemaFoldersPackage : Package
+    public sealed class SsmsSchemaFoldersPackage : Package, IDebugOutput
     {
         /// <summary>
         /// SsmsSchemaFoldersPackage GUID string.
@@ -287,7 +287,7 @@ namespace SsmsSchemaFolders
             
         }
 
-        private void debug_message(string message)
+        public void debug_message(string message)
         {
             if (_outputWindowPane != null)
             {
@@ -296,7 +296,7 @@ namespace SsmsSchemaFolders
             }
         }
 
-        private void debug_message(string message, params object[] args)
+        public void debug_message(string message, params object[] args)
         {
             if (_outputWindowPane != null)
             {
