@@ -16,8 +16,7 @@ You can download the latest version of SSMS for free from [Microsoft](https://ms
 
 [Download the latest release.](https://github.com/nicholas-ross/SSMS-Schema-Folders/releases)
 
-Depending on your web browser, you may need to unblock the zip file before extracting.
-Right click on the zip file and select Properties. 
+You may need to unblock the zip file before extracting. Right click on the zip file in Windows Explorer and select Properties. 
 If you see an `Unblock` button or checkbox then click it. 
 
 Extract the zip file and copy the folder into the SSMS extension folder. Remove or replace any previous version.
@@ -36,8 +35,12 @@ There are a few user options which change the style and behaviour of the schema 
 * Append Dot - Add a dot after the schema name on the folder label.
 * Clone Parent Node - Add the right click and connection properties of the parent node to the schema folder node.
 * Use Object Icon - Use the icon of the child node as the folder icon. If false then use the parent node (i.e. folder) icon.
+* Rename Node - Removes the schema name from the object node label.
 
 ## Known Issues
+
+### Not running/No options
+This happens when Windows security blocks running of dll files downloaded from the internet. Refer to the install instructions for the steps required to allow them to run.
 
 ### Load error
 The first time SSMS is run with the extension it will show an error message. Click 'No' and restart SSMS. The included reg file sets the same registry setting as when you click the no button.
@@ -49,6 +52,11 @@ This extension moves nodes in the Object Explorer tree view. This could cause pr
 Please report any issues to <https://github.com/nicholas-ross/SSMS-Schema-Folders/issues>.
 
 ## Change Log
+
+### v1.3 (2018-06-28)
+* Auto expand schema node when only one.
+* Improved performance.
+* Added option to remove schema name from object node label.
 
 ### v1.2.1 (2016-12-22)
 * Fixed: Folder expanding wait time.
