@@ -208,6 +208,18 @@ namespace SsmsSchemaFolders
                                 //node.TreeView.Cursor = Cursors.Default;
                                 break;
 
+                            case "Server/Database/Table":
+                            case "Server/Database/View":
+                            case "Server/Database/Synonym":
+                            case "Server/Database/StoredProcedure":
+                            case "Server/Database/UserDefinedFunction":
+                                if (Options.RenameNode)
+                                {
+                                    debug_message(node.Text);
+                                    _objectExplorerExtender.RenameNode(node);
+                                }
+                                break;
+
                             default:
                                 debug_message(urnPath);
                                 break;

@@ -24,5 +24,11 @@ namespace SsmsSchemaFolders
         [DisplayName("Use Object Icon")]
         [Description("Use the icon of the last child node as the folder icon. If false then use the parent node (i.e. folder) icon.")]
         public bool UseObjectIcon { get; set; } = true;
+
+        [Category("Object Display Options")]
+        [DisplayName("Rename Node")]
+        [Description("Remove the schema name from the object node.")]
+        public bool RenameNode { get; set; } = false;
+
     }
 }

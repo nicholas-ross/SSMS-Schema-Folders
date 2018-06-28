@@ -105,6 +105,16 @@ namespace SsmsSchemaFolders
         }
 
         /// <summary>
+        /// Removes schema name from object node.
+        /// </summary>
+        /// <param name="node">Object node to rename</param>
+        public void RenameNode(TreeNode node)
+        {
+            // Simple method, doesn't work correctly when schema name contains a dot.
+            node.Text = node.Text.Substring(node.Text.IndexOf('.') + 1);
+        }
+
+        /// <summary>
         /// Create schema nodes and move tables, functions and stored procedures under its schema node
         /// </summary>
         /// <param name="node">Table node to reorganize</param>
@@ -194,6 +204,11 @@ namespace SsmsSchemaFolders
                 foreach (TreeNode childNode in schemas[schema])
                 {
                     node.Nodes.Remove(childNode);
+                    if (Options.RenameNode)
+                    {
+                        // Note: Node is renamed back to orginal after expanding.
+                        RenameNode(childNode);
+                    }
                     schemaNode.Nodes.Add(childNode);
                 }
             }
