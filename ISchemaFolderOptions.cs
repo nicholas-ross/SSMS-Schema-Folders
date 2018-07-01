@@ -8,5 +8,9 @@ namespace SsmsSchemaFolders
         bool CloneParentNode { get; }
         bool UseObjectIcon { get; }
         bool RenameNode { get; }
+        FolderType Level1FolderType { get; }
+        int Level1MinNodeCount { get; }
+        FolderType Level2FolderType { get; }
+        int Level2MinNodeCount { get; }
     }
 }

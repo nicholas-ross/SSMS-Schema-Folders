@@ -30,5 +30,25 @@ namespace SsmsSchemaFolders
         [Description("Remove the schema name from the object node.")]
         public bool RenameNode { get; set; } = false;
 
+        [Category("Folder Level 1")]
+        [DisplayName("Folder Type")]
+        [Description("The type of sorting to use to create the folders.")]
+        public FolderType Level1FolderType { get; set; } = FolderType.Schema;
+
+        [Category("Folder Level 1")]
+        [DisplayName("Minimum Node Count")]
+        [Description("Sort nodes into folders only when it contains at least this many nodes.")]
+        public int Level1MinNodeCount { get; set; } = 0;
+
+        [Category("Folder Level 2")]
+        [DisplayName("Folder Type")]
+        [Description("The type of sorting to use to create the folders.")]
+        public FolderType Level2FolderType { get; set; } = FolderType.Alphabetical;
+
+        [Category("Folder Level 2")]
+        [DisplayName("Minimum Node Count")]
+        [Description("Sort nodes into folders only when it contains at least this many nodes.")]
+        public int Level2MinNodeCount { get; set; } = 200;
+
     }
 }

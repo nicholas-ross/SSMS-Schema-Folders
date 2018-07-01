@@ -29,6 +29,49 @@ namespace SsmsSchemaFolders
         }
 
 
+        public string GetFolderName(TreeNode node, int folderLevel)
+        {
+            FolderType folderType = FolderType.None;
+            switch (folderLevel)
+            {
+                case 1:
+                    folderType = Options.Level1FolderType;
+                    break;
+
+                case 2:
+                    folderType = Options.Level2FolderType;
+                    break;
+            }
+            switch (folderType)
+            {
+                case FolderType.Schema:
+                    return GetNodeSchema(node);
+
+                case FolderType.Alphabetical:
+                    var name = GetNodeName(node);
+                    if (!string.IsNullOrEmpty(name))
+                    {
+                        return name.Substring(0, 1);
+                    }
+                    break;
+
+            }
+            return null;
+        }
+
+        private int GetFolderLevelMinNodeCount(int folderLevel)
+        {
+            switch (folderLevel)
+            {
+                case 1:
+                    return Options.Level1MinNodeCount;
+
+                case 2:
+                    return Options.Level2MinNodeCount;
+            }
+            return 0;
+        }
+
         /// <summary>
         /// Gets the underlying object which is responsible for displaying object explorer structure
         /// </summary>
@@ -86,6 +129,26 @@ namespace SsmsSchemaFolders
                 return null;
         }
 
+        private String GetNodeFullName(TreeNode node)
+        {
+            var ni = GetNodeInformation(node);
+            if (ni != null)
+            {
+                return ni.InvariantName;
+            }
+            return null;
+        }
+
+        private String GetNodeName(TreeNode node)
+        {
+            var ni = GetNodeInformation(node);
+            if (ni != null)
+            {
+                return ni.Name;
+            }
+            return null;
+        }
+
         private String GetNodeSchema(TreeNode node)
         {
             var ni = GetNodeInformation(node);
@@ -122,9 +185,21 @@ namespace SsmsSchemaFolders
         /// <returns>The count of schema nodes.</returns>
         public int ReorganizeNodes(TreeNode node, string nodeTag)
         {
+            return ReorganizeNodes(node, nodeTag, 1);
+        }
+
+        /// <summary>
+        /// Create schema nodes and move tables, functions and stored procedures under its schema node
+        /// </summary>
+        /// <param name="node">Table node to reorganize</param>
+        /// <param name="nodeTag">Tag of new node</param>
+        /// <param name="folderLevel">The folder level of the current node</param>
+        /// <returns>The count of schema nodes.</returns>
+        private int ReorganizeNodes(TreeNode node, string nodeTag, int folderLevel)
+        {
             debug_message("ReorganizeNodes");
 
-            if (node.Nodes.Count <= 1)
+            if (node.Nodes.Count <= 1 || node.Nodes.Count < GetFolderLevelMinNodeCount(folderLevel))
                 return 0;
 
             //debug_message(DateTime.Now.ToString("ss.fff"));
@@ -134,74 +209,74 @@ namespace SsmsSchemaFolders
             //can't move nodes while iterating forward over them
             //create list of nodes to move then perform the update
 
-            var schemas = new Dictionary<String, List<TreeNode>>();
+            var folders = new Dictionary<String, List<TreeNode>>();
 
             foreach (TreeNode childNode in node.Nodes)
             {
-                //skip schema node folders but make sure they are in schemas list
+                //skip schema node folders but make sure they are in the folders list
                 if (childNode.Tag != null && childNode.Tag.ToString() == nodeTag)
                 {
-                    if (!schemas.ContainsKey(childNode.Name))
-                        schemas.Add(childNode.Name, new List<TreeNode>());
+                    if (!folders.ContainsKey(childNode.Name))
+                        folders.Add(childNode.Name, new List<TreeNode>());
 
                     continue;
                 }
 
-                var schema = GetNodeSchema(childNode);
+                var folderName = GetFolderName(childNode, folderLevel);
 
-                if (string.IsNullOrEmpty(schema))
+                if (string.IsNullOrEmpty(folderName))
                     continue;
 
                 //create schema node
-                if (!node.Nodes.ContainsKey(schema))
+                if (!node.Nodes.ContainsKey(folderName))
                 {
-                    TreeNode schemaNode;
+                    TreeNode folderNode;
                     if (Options.CloneParentNode)
                     {
-                        schemaNode = new SchemaFolderTreeNode(node);
-                        node.Nodes.Add(schemaNode);
+                        folderNode = new SchemaFolderTreeNode(node);
+                        node.Nodes.Add(folderNode);
                     }
                     else
                     {
-                        schemaNode = node.Nodes.Add(schema);
+                        folderNode = node.Nodes.Add(folderName);
                     }
 
-                    schemaNode.Name = schema;
-                    schemaNode.Text = schema;
-                    schemaNode.Tag = nodeTag;
+                    folderNode.Name = folderName;
+                    folderNode.Text = folderName;
+                    folderNode.Tag = nodeTag;
 
                     if (Options.AppendDot)
-                        schemaNode.Text += ".";
+                        folderNode.Text += ".";
 
                     if (Options.UseObjectIcon)
                     {
-                        schemaNode.ImageIndex = childNode.ImageIndex;
-                        schemaNode.SelectedImageIndex = childNode.ImageIndex;
+                        folderNode.ImageIndex = childNode.ImageIndex;
+                        folderNode.SelectedImageIndex = childNode.ImageIndex;
                     }
                     else
                     {
-                        schemaNode.ImageIndex = node.ImageIndex;
-                        schemaNode.SelectedImageIndex = node.ImageIndex;
+                        folderNode.ImageIndex = node.ImageIndex;
+                        folderNode.SelectedImageIndex = node.ImageIndex;
                     }
                 }
 
-                //add node to schema list
-                List<TreeNode> schemaNodeList;
-                if (!schemas.TryGetValue(schema, out schemaNodeList))
+                //add node to folder list
+                List<TreeNode> folderNodeList;
+                if (!folders.TryGetValue(folderName, out folderNodeList))
                 {
-                    schemaNodeList = new List<TreeNode>();
-                    schemas.Add(schema, schemaNodeList);
+                    folderNodeList = new List<TreeNode>();
+                    folders.Add(folderName, folderNodeList);
                 }
-                schemaNodeList.Add(childNode);
+                folderNodeList.Add(childNode);
             }
 
             //debug_message(DateTime.Now.ToString("ss.fff"));
 
             //move nodes to schema node
-            foreach (string schema in schemas.Keys)
+            foreach (string nodeName in folders.Keys)
             {
-                var schemaNode = node.Nodes[schema];
-                foreach (TreeNode childNode in schemas[schema])
+                var folderNode = node.Nodes[nodeName];
+                foreach (TreeNode childNode in folders[nodeName])
                 {
                     node.Nodes.Remove(childNode);
                     if (Options.RenameNode)
@@ -209,7 +284,7 @@ namespace SsmsSchemaFolders
                         // Note: Node is renamed back to orginal after expanding.
                         RenameNode(childNode);
                     }
-                    schemaNode.Nodes.Add(childNode);
+                    folderNode.Nodes.Add(childNode);
                 }
             }
 
@@ -217,7 +292,16 @@ namespace SsmsSchemaFolders
 
             //debug_message(DateTime.Now.ToString("ss.fff"));
 
-            return schemas.Count;
+            //process next folder level
+            if (folderLevel < 2)
+            {
+                foreach (string nodeName in folders.Keys)
+                {
+                    ReorganizeNodes(node.Nodes[nodeName], nodeTag, folderLevel + 1);
+                }
+            }
+
+            return folders.Count;
         }
 
         private void debug_message(string message)
