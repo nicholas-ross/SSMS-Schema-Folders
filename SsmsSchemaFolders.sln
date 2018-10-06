@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsmsSchemaFolders.Interface
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsmsSchemaFolders.Ssms2017", "SsmsSchemaFolders.Ssms2017.csproj", "{8442F331-CE3E-4FA2-BA00-D0AFD5243FEC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsmsSchemaFolders.Ssms18", "SsmsSchemaFolders.Ssms18.csproj", "{D333B8ED-584D-4BDA-91CE-7FE7473413CA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{8442F331-CE3E-4FA2-BA00-D0AFD5243FEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8442F331-CE3E-4FA2-BA00-D0AFD5243FEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8442F331-CE3E-4FA2-BA00-D0AFD5243FEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D333B8ED-584D-4BDA-91CE-7FE7473413CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D333B8ED-584D-4BDA-91CE-7FE7473413CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D333B8ED-584D-4BDA-91CE-7FE7473413CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D333B8ED-584D-4BDA-91CE-7FE7473413CA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
