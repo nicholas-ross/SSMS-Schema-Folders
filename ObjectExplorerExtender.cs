@@ -49,9 +49,11 @@ namespace SsmsSchemaFolders
 
                 case FolderType.Alphabetical:
                     var name = GetNodeName(node);
+                    //debug_message("{0} > {1}", node.Text, name);
+
                     if (!string.IsNullOrEmpty(name))
                     {
-                        return name.Substring(0, 1);
+                        return name.Substring(0, 1).ToUpper();
                     }
                     break;
 
@@ -106,7 +108,8 @@ namespace SsmsSchemaFolders
             if (serviceProvider != null)
             {
                 result = (serviceProvider.GetService(typeof(INodeInformation)) as INodeInformation);
-                //debug_message("NodeInformation\n UrnPath:{0}\n Name:{1}\n InvariantName:{2}\n Context:{3}\n NavigationContext:{4}", ni.UrnPath, ni.Name, ni.InvariantName, ni.Context, ni.NavigationContext);
+                //debug_message(node.Text);
+                //debug_message("NodeInformation\n UrnPath:{0}\n Name:{1}\n InvariantName:{2}\n Context:{3}\n NavigationContext:{4}", result.UrnPath, result.Name, result.InvariantName, result.Context, result.NavigationContext);
             }
             return result;
         }
@@ -142,7 +145,8 @@ namespace SsmsSchemaFolders
         private String GetNodeName(TreeNode node)
         {
             var ni = GetNodeInformation(node);
-            if (ni != null)
+            // Only return name if object is schema bound.
+            if (ni != null && ni.Context.Contains("@Schema="))
             {
                 return ni.Name;
             }
@@ -199,6 +203,7 @@ namespace SsmsSchemaFolders
         {
             debug_message("ReorganizeNodes");
 
+            //BUG: folder node count should be ignored on after expanding event
             if (node.Nodes.Count <= 1 || node.Nodes.Count < GetFolderLevelMinNodeCount(folderLevel))
                 return 0;
 
@@ -209,7 +214,7 @@ namespace SsmsSchemaFolders
             //can't move nodes while iterating forward over them
             //create list of nodes to move then perform the update
 
-            var folders = new Dictionary<String, List<TreeNode>>();
+            var folders = new SortedDictionary<string, List<TreeNode>>();
 
             foreach (TreeNode childNode in node.Nodes)
             {
@@ -272,12 +277,25 @@ namespace SsmsSchemaFolders
 
             //debug_message(DateTime.Now.ToString("ss.fff"));
 
+            //BUG: Alphabetical may not be in order if no schema folder.
+            bool sortRequired = true;
+
             //move nodes to schema node
+            //debug_message("move nodes to schema node");
             foreach (string nodeName in folders.Keys)
             {
+                //debug_message("folderNode:{0}", nodeName);
                 var folderNode = node.Nodes[nodeName];
+
+                if (sortRequired)
+                {
+                    node.Nodes.Remove(folderNode);
+                    node.Nodes.Add(folderNode);
+                }
+
                 foreach (TreeNode childNode in folders[nodeName])
                 {
+                    //debug_message("childNode:{0}", childNode.Text);
                     node.Nodes.Remove(childNode);
                     if (Options.RenameNode)
                     {
@@ -297,6 +315,7 @@ namespace SsmsSchemaFolders
             {
                 foreach (string nodeName in folders.Keys)
                 {
+                    //debug_message("Next ReorganizeNodes: {1} > {0}", nodeName, folderLevel);
                     ReorganizeNodes(node.Nodes[nodeName], nodeTag, folderLevel + 1);
                 }
             }
