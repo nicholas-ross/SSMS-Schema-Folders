@@ -1,7 +1,7 @@
 
 # [SSMS Schema Folders](https://github.com/nicholas-ross/SSMS-Schema-Folders)
 
-This an extension for SQL Server Management Studio 2012, 2014, 2016 and 17.
+This an extension for SQL Server Management Studio 2012, 2014, 2016, 17 and 18.
 It groups sql objects in Object Explorer (tables, views, etc.) into schema folders.
 
 ![Object Explorer](ObjectExplorerView.png)
@@ -26,6 +26,7 @@ Run the included reg file to skip the load error.
 * 2014 - `C:\Program Files (x86)\Microsoft SQL Server\120\Tools\Binn\ManagementStudio\Extensions`
 * 2016 - `C:\Program Files (x86)\Microsoft SQL Server\130\Tools\Binn\ManagementStudio\Extensions`
 * 17 - `C:\Program Files (x86)\Microsoft SQL Server\140\Tools\Binn\ManagementStudio\Extensions`
+* 18 - `C:\Program Files (x86)\Microsoft SQL Server Management Studio 18\Common7\IDE\Extensions`
 
 ## Options
 
@@ -53,6 +54,9 @@ Please report any issues to <https://github.com/nicholas-ross/SSMS-Schema-Folder
 
 ## Change Log
 
+### v1.3.1 (2018-10-06)
+* Added support for v18.0 (preview 4).
+
 ### v1.3 (2018-06-28)
 * Auto expand schema node when only one.
 * Improved performance.
@@ -69,7 +73,7 @@ Please report any issues to <https://github.com/nicholas-ross/SSMS-Schema-Folder
 
 ### v1.1 (2016-07-14)
 * Added user options.
-* Fixed: Error when running mulitple SSMS instances.
+* Fixed: Error when running multiple SSMS instances.
 
 **Debug Build**
 * Added output window pane for debug messages.
