@@ -1,33 +1,34 @@
-﻿using Microsoft.VisualStudio.Shell;
-using System.ComponentModel;
-
-namespace SsmsSchemaFolders
+﻿namespace SsmsSchemaFolders
 {
+    using Localization;
+
+    using Microsoft.VisualStudio.Shell;
+
     public class SchemaFolderOptions : DialogPage, ISchemaFolderOptions
     {
-        [Category("Active")]
-        [DisplayName("Enabled")]
-        [Description("Group sql objects in Object Explorer (tables, views, etc.) into schema folders.")]
+        [CategoryResources(nameof(SchemaFolderOptions) + "Active")]
+        [DisplayNameResources(nameof(SchemaFolderOptions) + nameof(Enabled))]
+        [DescriptionResources(nameof(SchemaFolderOptions) + nameof(Enabled))]
         public bool Enabled { get; set; } = true;
 
-        [Category("Folder Display Options")]
-        [DisplayName("Append Dot")]
-        [Description("Add a dot after the schema name on the folder label. ")]
+        [CategoryResources(nameof(SchemaFolderOptions) + "FolderDisplayOptions")]
+        [DisplayNameResources(nameof(SchemaFolderOptions) + nameof(AppendDot))]
+        [DescriptionResources(nameof(SchemaFolderOptions) + nameof(AppendDot))]
         public bool AppendDot { get; set; } = true;
 
-        [Category("Folder Display Options")]
-        [DisplayName("Clone Parent Node")]
-        [Description("Add the right click and connection properties of the parent node to the schema folder node.")]
+        [CategoryResources(nameof(SchemaFolderOptions) + "FolderDisplayOptions")]
+        [DisplayNameResources(nameof(SchemaFolderOptions) + nameof(CloneParentNode))]
+        [DescriptionResources(nameof(SchemaFolderOptions) + nameof(CloneParentNode))]
         public bool CloneParentNode { get; set; } = true;
 
-        [Category("Folder Display Options")]
-        [DisplayName("Use Object Icon")]
-        [Description("Use the icon of the last child node as the folder icon. If false then use the parent node (i.e. folder) icon.")]
+        [CategoryResources(nameof(SchemaFolderOptions) + "FolderDisplayOptions")]
+        [DisplayNameResources(nameof(SchemaFolderOptions) + nameof(UseObjectIcon))]
+        [DescriptionResources(nameof(SchemaFolderOptions) + nameof(UseObjectIcon))]
         public bool UseObjectIcon { get; set; } = true;
 
-        [Category("Object Display Options")]
-        [DisplayName("Rename Node")]
-        [Description("Remove the schema name from the object node.")]
+        [CategoryResources(nameof(SchemaFolderOptions) + "ObjectDisplayOptions")]
+        [DisplayNameResources(nameof(SchemaFolderOptions) + nameof(RenameNode))]
+        [DescriptionResources(nameof(SchemaFolderOptions) + nameof(RenameNode))]
         public bool RenameNode { get; set; } = false;
 
     }
