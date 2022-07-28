@@ -1,8 +1,8 @@
 ﻿namespace SsmsSchemaFolders
 {
     using Localization;
-
     using Microsoft.VisualStudio.Shell;
+    using System.ComponentModel;
 
     public class SchemaFolderOptions : DialogPage, ISchemaFolderOptions
     {
