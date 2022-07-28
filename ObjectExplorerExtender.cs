@@ -99,7 +99,7 @@ namespace SsmsSchemaFolders
                 //    return match.Groups[1].Value;
 
                 if (ni.InvariantName.EndsWith("." + ni.Name))
-                    return ni.InvariantName.Replace("." + ni.Name, String.Empty);
+                    return ni.InvariantName.Substring(0, ni.InvariantName.Length - ni.Name.Length - 1);
             }
             return null;
         }
