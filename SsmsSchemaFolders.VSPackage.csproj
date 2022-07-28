@@ -143,10 +143,19 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="SsmsSchemaFolders.Interfaces.csproj">
+      <Project>{7d308a5e-267f-4ac6-b4ac-d6d94f93bbeb}</Project>
+      <Name>SsmsSchemaFolders.Interfaces</Name>
+    </ProjectReference>
     <ProjectReference Include="SsmsSchemaFolders.Ssms18.csproj">
       <Project>{d333b8ed-584d-4bda-91ce-7fe7473413ca}</Project>
       <Name>SsmsSchemaFolders.Ssms18</Name>
       <Aliases>Ssms18</Aliases>
+    </ProjectReference>
+    <ProjectReference Include="SsmsSchemaFolders.Ssms19.csproj">
+      <Project>{7052a9c5-1263-433d-a758-1da44d784e2f}</Project>
+      <Name>SsmsSchemaFolders.Ssms19</Name>
+      <Aliases>Ssms19</Aliases>
     </ProjectReference>
     <ProjectReference Include="SsmsSchemaFolders.Ssms2012.csproj">
       <Project>{9c9fa743-0d5d-4847-9544-3ad0ffbad79f}</Project>
@@ -162,10 +171,6 @@
       <Project>{6ea9a0dd-d6b6-434a-b67b-f92e12b005f7}</Project>
       <Name>SsmsSchemaFolders.Ssms2016</Name>
       <Aliases>Ssms2016</Aliases>
-    </ProjectReference>
-    <ProjectReference Include="SsmsSchemaFolders.Interfaces.csproj">
-      <Project>{7d308a5e-267f-4ac6-b4ac-d6d94f93bbeb}</Project>
-      <Name>SsmsSchemaFolders.Interfaces</Name>
     </ProjectReference>
     <ProjectReference Include="SsmsSchemaFolders.Ssms2017.csproj">
       <Project>{8442f331-ce3e-4fa2-ba00-d0afd5243fec}</Project>
