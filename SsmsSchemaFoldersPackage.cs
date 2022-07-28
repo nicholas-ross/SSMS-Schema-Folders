@@ -231,6 +231,8 @@ namespace SsmsSchemaFolders
                                 break;
 
                             default:
+                                // Server/DatabasesFolder
+                                // Server/Database
                                 debug_message(urnPath);
                                 break;
                         }
@@ -294,7 +296,8 @@ namespace SsmsSchemaFolders
 
                             ReorganizeFolders(e.Node, true);
 
-                            e.Node.TreeView.Cursor = Cursors.Default;
+                            if (e.Node.TreeView != null)
+                                e.Node.TreeView.Cursor = Cursors.Default;
                         }
                         else
                         {

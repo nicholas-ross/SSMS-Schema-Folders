@@ -8,5 +8,8 @@ namespace SsmsSchemaFolders
         bool CloneParentNode { get; }
         bool UseObjectIcon { get; }
         bool RenameNode { get; }
+        int QuickSchema { get; }
+        int UnresponsiveTimeout { get; }
+        int UseClear { get; }
     }
 }

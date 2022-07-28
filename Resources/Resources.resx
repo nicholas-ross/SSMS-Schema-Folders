@@ -126,6 +126,9 @@
   <data name="PropertyCategorySchemaFolderOptionsObjectDisplayOptions" xml:space="preserve">
     <value>Object Display Options</value>
   </data>
+  <data name="PropertyCategorySchemaFolderOptionsPerformance" xml:space="preserve">
+    <value>Performance</value>
+  </data>
   <data name="PropertyDescriptionSchemaFolderOptionsAppendDot" xml:space="preserve">
     <value>Add a dot after the schema name on the folder label.</value>
   </data>
@@ -135,8 +138,17 @@
   <data name="PropertyDescriptionSchemaFolderOptionsEnabled" xml:space="preserve">
     <value>Group sql objects in Object Explorer (tables, views, etc.) into schema folders.</value>
   </data>
+  <data name="PropertyDescriptionSchemaFolderOptionsQuickSchema" xml:space="preserve">
+    <value>Min node count required before using faster but inaccurate method to get schema. Zero = disabled.</value>
+  </data>
   <data name="PropertyDescriptionSchemaFolderOptionsRenameNode" xml:space="preserve">
     <value>Remove the schema name from the object node.</value>
+  </data>
+  <data name="PropertyDescriptionSchemaFolderOptionsUnresponsiveTimeout" xml:space="preserve">
+    <value>Milliseconds. Increasing will update faster but be more unresponsive.</value>
+  </data>
+  <data name="PropertyDescriptionSchemaFolderOptionsUseClear" xml:space="preserve">
+    <value>Min node count required before using faster method but will be unresponsive while updating. Zero = disabled.</value>
   </data>
   <data name="PropertyDescriptionSchemaFolderOptionsUseObjectIcon" xml:space="preserve">
     <value>Use the icon of the last child node as the folder icon. If false then use the parent node (i.e. folder) icon.</value>
@@ -150,8 +162,17 @@
   <data name="PropertyDisplayNameSchemaFolderOptionsEnabled" xml:space="preserve">
     <value>Enabled</value>
   </data>
+  <data name="PropertyDisplayNameSchemaFolderOptionsQuickSchema" xml:space="preserve">
+    <value>Quick schema from node text</value>
+  </data>
   <data name="PropertyDisplayNameSchemaFolderOptionsRenameNode" xml:space="preserve">
     <value>Rename Node</value>
+  </data>
+  <data name="PropertyDisplayNameSchemaFolderOptionsUnresponsiveTimeout" xml:space="preserve">
+    <value>Unresponsive timeout</value>
+  </data>
+  <data name="PropertyDisplayNameSchemaFolderOptionsUseClear" xml:space="preserve">
+    <value>Use Nodes.Clear</value>
   </data>
   <data name="PropertyDisplayNameSchemaFolderOptionsUseObjectIcon" xml:space="preserve">
     <value>Use Object Icon</value>

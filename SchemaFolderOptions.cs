@@ -35,5 +35,24 @@
         [DescriptionResources(nameof(SchemaFolderOptions) + nameof(RenameNode))]
         [DefaultValue(false)]
         public bool RenameNode { get; set; } = false;
+
+        [CategoryResources(nameof(SchemaFolderOptions) + "Performance")]
+        [DisplayNameResources(nameof(SchemaFolderOptions) + nameof(QuickSchema))]
+        [DescriptionResources(nameof(SchemaFolderOptions) + nameof(QuickSchema))]
+        [DefaultValue(0)]
+        public int QuickSchema { get; set; } = 0;
+
+        [CategoryResources(nameof(SchemaFolderOptions) + "Performance")]
+        [DisplayNameResources(nameof(SchemaFolderOptions) + nameof(UnresponsiveTimeout))]
+        [DescriptionResources(nameof(SchemaFolderOptions) + nameof(UnresponsiveTimeout))]
+        [DefaultValue(200)]
+        public int UnresponsiveTimeout { get; set; } = 200;
+
+        [CategoryResources(nameof(SchemaFolderOptions) + "Performance")]
+        [DisplayNameResources(nameof(SchemaFolderOptions) + nameof(UseClear))]
+        [DescriptionResources(nameof(SchemaFolderOptions) + nameof(UseClear))]
+        [DefaultValue(0)]
+        public int UseClear { get; set; } = 0;
+
     }
 }
