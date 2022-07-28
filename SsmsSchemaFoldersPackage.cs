@@ -156,8 +156,8 @@ namespace SsmsSchemaFolders
                     }
                 }
 
-                ActivityLogEntry(__ACTIVITYLOG_ENTRYTYPE.ALE_WARNING, "Unknown SSMS Version. Defaulting to 2016.");
-                return new Ssms2016::SsmsSchemaFolders.ObjectExplorerExtender(this, Options);
+                ActivityLogEntry(__ACTIVITYLOG_ENTRYTYPE.ALE_WARNING, "Unknown SSMS Version. Defaulting to 18.");
+                return new Ssms18::SsmsSchemaFolders.ObjectExplorerExtender(this, Options);
             }
             catch (Exception ex)
             {
