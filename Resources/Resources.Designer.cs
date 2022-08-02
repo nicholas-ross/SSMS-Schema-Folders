@@ -79,6 +79,24 @@ namespace SsmsSchemaFolders.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Folder Level 1.
+        /// </summary>
+        internal static string PropertyCategorySchemaFolderOptionsFolderLevel1 {
+            get {
+                return ResourceManager.GetString("PropertyCategorySchemaFolderOptionsFolderLevel1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Folder Level 2.
+        /// </summary>
+        internal static string PropertyCategorySchemaFolderOptionsFolderLevel2 {
+            get {
+                return ResourceManager.GetString("PropertyCategorySchemaFolderOptionsFolderLevel2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Object Display Options.
         /// </summary>
         internal static string PropertyCategorySchemaFolderOptionsObjectDisplayOptions {
@@ -120,6 +138,42 @@ namespace SsmsSchemaFolders.Resources {
         internal static string PropertyDescriptionSchemaFolderOptionsEnabled {
             get {
                 return ResourceManager.GetString("PropertyDescriptionSchemaFolderOptionsEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The type of sorting to use to create the folders..
+        /// </summary>
+        internal static string PropertyDescriptionSchemaFolderOptionsLevel1FolderType {
+            get {
+                return ResourceManager.GetString("PropertyDescriptionSchemaFolderOptionsLevel1FolderType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sort nodes into folders only when it contains at least this many nodes..
+        /// </summary>
+        internal static string PropertyDescriptionSchemaFolderOptionsLevel1MinNodeCount {
+            get {
+                return ResourceManager.GetString("PropertyDescriptionSchemaFolderOptionsLevel1MinNodeCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The type of sorting to use to create the folders..
+        /// </summary>
+        internal static string PropertyDescriptionSchemaFolderOptionsLevel2FolderType {
+            get {
+                return ResourceManager.GetString("PropertyDescriptionSchemaFolderOptionsLevel2FolderType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sort nodes into folders only when it contains at least this many nodes..
+        /// </summary>
+        internal static string PropertyDescriptionSchemaFolderOptionsLevel2MinNodeCount {
+            get {
+                return ResourceManager.GetString("PropertyDescriptionSchemaFolderOptionsLevel2MinNodeCount", resourceCulture);
             }
         }
         
@@ -192,6 +246,42 @@ namespace SsmsSchemaFolders.Resources {
         internal static string PropertyDisplayNameSchemaFolderOptionsEnabled {
             get {
                 return ResourceManager.GetString("PropertyDisplayNameSchemaFolderOptionsEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Folder Type.
+        /// </summary>
+        internal static string PropertyDisplayNameSchemaFolderOptionsLevel1FolderType {
+            get {
+                return ResourceManager.GetString("PropertyDisplayNameSchemaFolderOptionsLevel1FolderType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Minimum Node Count.
+        /// </summary>
+        internal static string PropertyDisplayNameSchemaFolderOptionsLevel1MinNodeCount {
+            get {
+                return ResourceManager.GetString("PropertyDisplayNameSchemaFolderOptionsLevel1MinNodeCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Folder Type.
+        /// </summary>
+        internal static string PropertyDisplayNameSchemaFolderOptionsLevel2FolderType {
+            get {
+                return ResourceManager.GetString("PropertyDisplayNameSchemaFolderOptionsLevel2FolderType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Minimum Node Count.
+        /// </summary>
+        internal static string PropertyDisplayNameSchemaFolderOptionsLevel2MinNodeCount {
+            get {
+                return ResourceManager.GetString("PropertyDisplayNameSchemaFolderOptionsLevel2MinNodeCount", resourceCulture);
             }
         }
         

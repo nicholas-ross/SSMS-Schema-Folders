@@ -30,7 +30,7 @@ namespace SsmsSchemaFolders
         }
 
 
-        public string GetFolderName(TreeNode node, int folderLevel)
+        public string GetFolderName(TreeNode node, int folderLevel, bool quickSchemaName)
         {
             FolderType folderType = FolderType.None;
             switch (folderLevel)
@@ -46,7 +46,7 @@ namespace SsmsSchemaFolders
             switch (folderType)
             {
                 case FolderType.Schema:
-                    return GetNodeSchema(node);
+                    return (quickSchemaName) ? GetNodeSchemaQuick(node) : GetNodeSchema(node);
 
                 case FolderType.Alphabetical:
                     var name = GetNodeName(node);
@@ -199,6 +199,10 @@ namespace SsmsSchemaFolders
         /// <returns>The count of schema nodes.</returns>
         public int ReorganizeNodes(TreeNode node, string nodeTag)
         {
+            if (Options.UseClear > 0 && node.Nodes.Count >= Options.UseClear)
+                //BUG: Doesn't support folder levels. Need to rewrite.
+                return ReorganizeNodesWithClear(node, nodeTag);
+
             return ReorganizeNodes(node, nodeTag, 1);
         }
 
@@ -217,9 +221,6 @@ namespace SsmsSchemaFolders
             if (node.Nodes.Count <= 1 || node.Nodes.Count < GetFolderLevelMinNodeCount(folderLevel))
                 return 0;
             
-            if (Options.UseClear > 0 && node.Nodes.Count >= Options.UseClear)
-                return ReorganizeNodesWithClear(node, nodeTag);
-
             var nodeText = node.Text;
             node.Text += " (sorting...)";
             //node.TreeView.Update();
@@ -237,8 +238,8 @@ namespace SsmsSchemaFolders
             //create list of nodes to move then perform the update
 
             var folders = new SortedDictionary<string, List<TreeNode>>();
-            int schemaNodeIndex = -1;
-            var newSchemaNodes = new List<TreeNode>();
+            int folderNodeIndex = -1;
+            var newFolderNodes = new List<TreeNode>();
 
             //debug_message("Sort Nodes:{0}", sw.ElapsedMilliseconds);
 
@@ -250,13 +251,12 @@ namespace SsmsSchemaFolders
                     if (!folders.ContainsKey(childNode.Name))
                         folders.Add(childNode.Name, new List<TreeNode>());
 
-                    schemaNodeIndex = childNode.Index;
+                    folderNodeIndex = childNode.Index;
 
                     continue;
                 }
 
-                var folderName = GetFolderName(childNode, folderLevel);
-                var schema = (quickAndDirty) ? GetNodeSchemaQuick(childNode) : GetNodeSchema(childNode);
+                string folderName = GetFolderName(childNode, folderLevel, quickAndDirty);
 
                 if (string.IsNullOrEmpty(folderName))
                     continue;
@@ -274,7 +274,7 @@ namespace SsmsSchemaFolders
                     {
                         folderNode = node.Nodes.Add(folderName);
                     }
-                    newSchemaNodes.Add(folderNode);
+                    newFolderNodes.Add(folderNode);
 
                     folderNode.Name = folderName;
                     folderNode.Text = folderName;
@@ -317,18 +317,18 @@ namespace SsmsSchemaFolders
 
             //debug_message("Move Nodes:{0}", sw.ElapsedMilliseconds);
 
-            if (schemaNodeIndex >= 0)
+            if (folderNodeIndex >= 0)
             {
                 // Move schema nodes to top of tree
-                foreach (var schemaNode in newSchemaNodes)
+                foreach (var folderNode in newFolderNodes)
                 {
-                    node.Nodes.Remove(schemaNode);
-                    node.Nodes.Insert(++schemaNodeIndex, schemaNode);
+                    node.Nodes.Remove(folderNode);
+                    node.Nodes.Insert(++folderNodeIndex, folderNode);
                 }
             }
 
             //BUG: Alphabetical may not be in order if no schema folder.
-            bool sortRequired = true;
+            bool sortRequired = (folderLevel == 1 && Options.Level1FolderType == FolderType.Alphabetical);
 
             //move nodes to schema node
             //debug_message("move nodes to schema node");

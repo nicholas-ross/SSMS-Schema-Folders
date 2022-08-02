@@ -123,6 +123,12 @@
   <data name="PropertyCategorySchemaFolderOptionsFolderDisplayOptions" xml:space="preserve">
     <value>Folder Display Options</value>
   </data>
+  <data name="PropertyCategorySchemaFolderOptionsFolderLevel1" xml:space="preserve">
+    <value>Folder Level 1</value>
+  </data>
+  <data name="PropertyCategorySchemaFolderOptionsFolderLevel2" xml:space="preserve">
+    <value>Folder Level 2</value>
+  </data>
   <data name="PropertyCategorySchemaFolderOptionsObjectDisplayOptions" xml:space="preserve">
     <value>Object Display Options</value>
   </data>
@@ -137,6 +143,18 @@
   </data>
   <data name="PropertyDescriptionSchemaFolderOptionsEnabled" xml:space="preserve">
     <value>Group sql objects in Object Explorer (tables, views, etc.) into schema folders.</value>
+  </data>
+  <data name="PropertyDescriptionSchemaFolderOptionsLevel1FolderType" xml:space="preserve">
+    <value>The type of sorting to use to create the folders.</value>
+  </data>
+  <data name="PropertyDescriptionSchemaFolderOptionsLevel1MinNodeCount" xml:space="preserve">
+    <value>Sort nodes into folders only when it contains at least this many nodes.</value>
+  </data>
+  <data name="PropertyDescriptionSchemaFolderOptionsLevel2FolderType" xml:space="preserve">
+    <value>The type of sorting to use to create the folders.</value>
+  </data>
+  <data name="PropertyDescriptionSchemaFolderOptionsLevel2MinNodeCount" xml:space="preserve">
+    <value>Sort nodes into folders only when it contains at least this many nodes.</value>
   </data>
   <data name="PropertyDescriptionSchemaFolderOptionsQuickSchema" xml:space="preserve">
     <value>Min node count required before using faster but inaccurate method to get schema. Zero = disabled.</value>
@@ -161,6 +179,18 @@
   </data>
   <data name="PropertyDisplayNameSchemaFolderOptionsEnabled" xml:space="preserve">
     <value>Enabled</value>
+  </data>
+  <data name="PropertyDisplayNameSchemaFolderOptionsLevel1FolderType" xml:space="preserve">
+    <value>Folder Type</value>
+  </data>
+  <data name="PropertyDisplayNameSchemaFolderOptionsLevel1MinNodeCount" xml:space="preserve">
+    <value>Minimum Node Count</value>
+  </data>
+  <data name="PropertyDisplayNameSchemaFolderOptionsLevel2FolderType" xml:space="preserve">
+    <value>Folder Type</value>
+  </data>
+  <data name="PropertyDisplayNameSchemaFolderOptionsLevel2MinNodeCount" xml:space="preserve">
+    <value>Minimum Node Count</value>
   </data>
   <data name="PropertyDisplayNameSchemaFolderOptionsQuickSchema" xml:space="preserve">
     <value>Quick schema from node text</value>
