@@ -42,6 +42,7 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FolderType.cs" />
     <Compile Include="IDebugOutput.cs" />
     <Compile Include="IObjectExplorerExtender.cs" />
     <Compile Include="ISchemaFolderOptions.cs" />

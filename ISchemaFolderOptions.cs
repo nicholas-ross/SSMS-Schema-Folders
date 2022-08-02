@@ -11,5 +11,9 @@ namespace SsmsSchemaFolders
         int QuickSchema { get; }
         int UnresponsiveTimeout { get; }
         int UseClear { get; }
+        FolderType Level1FolderType { get; }
+        int Level1MinNodeCount { get; }
+        FolderType Level2FolderType { get; }
+        int Level2MinNodeCount { get; }
     }
 }
