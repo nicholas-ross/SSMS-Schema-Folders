@@ -187,8 +187,28 @@ namespace SsmsSchemaFolders
         /// <param name="node">Object node to rename</param>
         public void RenameNode(TreeNode node)
         {
-            // Simple method, doesn't work correctly when schema name contains a dot.
-            node.Text = node.Text.Substring(node.Text.IndexOf('.') + 1);
+            if (GetNodeName(node) is string name)
+            {
+                node.Text = name;
+            }
+        }
+
+        /// <summary>
+        /// Removes schema name from object node.
+        /// </summary>
+        /// <param name="node">Object node to rename</param>
+        /// <param name="quick">Use quick substring method</param>
+        private void RenameNode(TreeNode node, bool quick)
+        {
+            if (quick)
+            {
+                // Simple method, doesn't work correctly when schema name contains a dot.
+                node.Text = node.Text.Substring(node.Text.IndexOf('.') + 1);
+            }
+            else
+            {
+                RenameNode(node);
+            }
         }
 
         /// <summary>
@@ -351,7 +371,7 @@ namespace SsmsSchemaFolders
                     if (Options.RenameNode)
                     {
                         // Note: Node is renamed back to orginal after expanding.
-                        RenameNode(childNode);
+                        RenameNode(childNode, quickAndDirty);
                     }
                     folderNode.Nodes.Add(childNode);
 
