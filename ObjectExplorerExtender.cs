@@ -46,7 +46,23 @@ namespace SsmsSchemaFolders
             switch (folderType)
             {
                 case FolderType.Schema:
-                    return (quickSchemaName) ? GetNodeSchemaQuick(node) : GetNodeSchema(node);
+                    string schema = (quickSchemaName) ? GetNodeSchemaQuick(node) : GetNodeSchema(node);
+
+                    if (schema != null && Options.Level1FolderType == Options.Level2FolderType)
+                    {
+                        int dotIndex = schema.IndexOf('.');
+                        if (dotIndex != -1)
+                        {
+                            schema = (folderLevel == 1) ? schema.Substring(0, dotIndex) : schema.Substring(dotIndex + 1);
+                        }
+                        else
+                        {
+                            if (folderLevel == 2)
+                                // Already sorted by schema. Don't add again.
+                                return null;
+                        }
+                    }
+                    return schema;
 
                 case FolderType.Alphabetical:
                     var name = GetNodeName(node);
@@ -219,6 +235,10 @@ namespace SsmsSchemaFolders
         /// <returns>The count of schema nodes.</returns>
         public int ReorganizeNodes(TreeNode node, string nodeTag)
         {
+            if (node.Nodes.Count <= 1)
+                // 1 is the lazy expanding placeholder node.
+                return 0;
+
             if (Options.UseClear > 0 && node.Nodes.Count >= Options.UseClear)
                 //BUG: Doesn't support folder levels. Need to rewrite.
                 return ReorganizeNodesWithClear(node, nodeTag);
@@ -238,7 +258,8 @@ namespace SsmsSchemaFolders
             debug_message("ReorganizeNodes");
 
             //BUG: folder node count should be ignored on after expanding event
-            if (node.Nodes.Count <= 1 || node.Nodes.Count < GetFolderLevelMinNodeCount(folderLevel))
+            // First 50 have already been sorted which will affect the count.
+            if (node.Nodes.Count < GetFolderLevelMinNodeCount(folderLevel))
                 return 0;
             
             var nodeText = node.Text;
