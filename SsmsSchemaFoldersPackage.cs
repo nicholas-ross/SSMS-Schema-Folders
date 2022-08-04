@@ -51,10 +51,7 @@ namespace SsmsSchemaFolders
         
         private IObjectExplorerExtender _objectExplorerExtender;
 
-        // Ignore never assigned to warning for release build.
-#pragma warning disable CS0649
-        private IVsOutputWindowPane _outputWindowPane;
-#pragma warning restore CS0649
+        private IVsOutputWindowPane _outputWindowPane = null;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SsmsSchemaFoldersPackage"/> class.
@@ -66,8 +63,6 @@ namespace SsmsSchemaFolders
             // not sited yet inside Visual Studio environment. The place to do all the other
             // initialization is the Initialize method.
         }
-
-        #region Package Members
 
         /// <summary>
         /// Initialization of the package; this method is called right after the package is sited, so this is the place
@@ -95,25 +90,18 @@ namespace SsmsSchemaFolders
             if (_objectExplorerExtender != null)
                 AttachTreeViewEvents();
 
-            // Reg setting is removed after initialize. Wait short delay then recreate it.
-            DelayAddSkipLoadingReg();
-        }
-
-        #endregion
-
-        private void AddSkipLoadingReg()
-        {
-            var myPackage = this.UserRegistryRoot.CreateSubKey(@"Packages\{" + SsmsSchemaFoldersPackage.PackageGuidString + "}");
-            myPackage.SetValue("SkipLoading", 1);
         }
 
         private void DelayAddSkipLoadingReg()
         {
+            // Reg setting is only required for 2017 and earlier.
+            // Reg setting is removed after initialize. Wait short delay then recreate it.
             var delay = new Timer();
             delay.Tick += delegate (object o, EventArgs e)
             {
                 delay.Stop();
-                AddSkipLoadingReg();
+                var myPackage = this.UserRegistryRoot.CreateSubKey(@"Packages\{" + SsmsSchemaFoldersPackage.PackageGuidString + "}");
+                myPackage.SetValue("SkipLoading", 1);
             };
             delay.Interval = 1000;
             delay.Start();
@@ -141,18 +129,22 @@ namespace SsmsSchemaFolders
 
                         case 14:
                             debug_message("SsmsVersion:2017");
+                            DelayAddSkipLoadingReg();
                             return new Ssms2017::SsmsSchemaFolders.ObjectExplorerExtender(this, Options);
 
                         case 13:
                             debug_message("SsmsVersion:2016");
+                            DelayAddSkipLoadingReg();
                             return new Ssms2016::SsmsSchemaFolders.ObjectExplorerExtender(this, Options);
 
                         case 12:
                             debug_message("SsmsVersion:2014");
+                            DelayAddSkipLoadingReg();
                             return new Ssms2014::SsmsSchemaFolders.ObjectExplorerExtender(this, Options);
 
                         case 11:
                             debug_message("SsmsVersion:2012");
+                            DelayAddSkipLoadingReg();
                             return new Ssms2012::SsmsSchemaFolders.ObjectExplorerExtender(this, Options);
 
                         default:
