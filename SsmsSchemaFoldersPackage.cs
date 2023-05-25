@@ -119,6 +119,7 @@ namespace SsmsSchemaFolders
 
                     switch (ssmsInterfacesVersion.FileMajorPart)
                     {
+                        case 19: // v19.1 changed file version numbers
                         case 16:
                             debug_message("SsmsVersion:19");
                             return new Ssms19::SsmsSchemaFolders.ObjectExplorerExtender(this, Options);
@@ -153,8 +154,8 @@ namespace SsmsSchemaFolders
                     }
                 }
 
-                ActivityLogEntry(__ACTIVITYLOG_ENTRYTYPE.ALE_WARNING, "Unknown SSMS Version. Defaulting to 18.");
-                return new Ssms18::SsmsSchemaFolders.ObjectExplorerExtender(this, Options);
+                ActivityLogEntry(__ACTIVITYLOG_ENTRYTYPE.ALE_WARNING, "Unknown SSMS Version. Defaulting to 19.");
+                return new Ssms19::SsmsSchemaFolders.ObjectExplorerExtender(this, Options);
             }
             catch (Exception ex)
             {
