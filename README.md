@@ -73,7 +73,7 @@ Please report any issues to <https://github.com/nicholas-ross/SSMS-Schema-Folder
 ### v1.4 (2022-07-28)
 * Added support for v19.0 (preview 2).
 * Language localisation for options. (Thank you @micjahn)
-* Performance improvments and options for very large databases.
+* Performance improvements and options for very large databases.
 * Fixed: Incorrect folder name when schema contains a dot.
 
 ### v1.3.1 (2018-10-06)
