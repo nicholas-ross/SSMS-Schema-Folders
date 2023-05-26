@@ -123,8 +123,17 @@
   <data name="PropertyCategorySchemaFolderOptionsFolderDisplayOptions" xml:space="preserve">
     <value>Anzeigeoptionen für Ordner</value>
   </data>
+  <data name="PropertyCategorySchemaFolderOptionsFolderLevel1" xml:space="preserve">
+    <value>Ordnerebene 1</value>
+  </data>
+  <data name="PropertyCategorySchemaFolderOptionsFolderLevel2" xml:space="preserve">
+    <value>Ordnerebene 2</value>
+  </data>
   <data name="PropertyCategorySchemaFolderOptionsObjectDisplayOptions" xml:space="preserve">
     <value>Anzeigeoptionen für Objekte</value>
+  </data>
+  <data name="PropertyCategorySchemaFolderOptionsPerformance" xml:space="preserve">
+    <value>Leistung</value>
   </data>
   <data name="PropertyDescriptionSchemaFolderOptionsAppendDot" xml:space="preserve">
     <value>Fügt einen Punkt nach dem Schema für den Namen des Ordners an.</value>
@@ -135,8 +144,29 @@
   <data name="PropertyDescriptionSchemaFolderOptionsEnabled" xml:space="preserve">
     <value>Aktiviert das Gruppieren von SQL Objekten (Tabellen, Views, etc.) in Ordner mit dem Namen des Schemas im Objekt Explorer.</value>
   </data>
+  <data name="PropertyDescriptionSchemaFolderOptionsLevel1FolderType" xml:space="preserve">
+    <value>Die Art der Sortierung, die zum Erstellen der Ordner verwendet werden soll.</value>
+  </data>
+  <data name="PropertyDescriptionSchemaFolderOptionsLevel1MinNodeCount" xml:space="preserve">
+    <value>Sortieren Sie Knoten nur dann in Ordner, wenn sie mindestens so viele Knoten enthalten.</value>
+  </data>
+  <data name="PropertyDescriptionSchemaFolderOptionsLevel2FolderType" xml:space="preserve">
+    <value>Die Art der Sortierung, die zum Erstellen der Ordner verwendet werden soll.</value>
+  </data>
+  <data name="PropertyDescriptionSchemaFolderOptionsLevel2MinNodeCount" xml:space="preserve">
+    <value>Sortieren Sie Knoten nur dann in Ordner, wenn sie mindestens so viele Knoten enthalten.</value>
+  </data>
+  <data name="PropertyDescriptionSchemaFolderOptionsQuickSchema" xml:space="preserve">
+    <value>Mindestknotenzahl erforderlich, bevor eine schnellere, aber ungenaue Methode zum Abrufen des Schemas verwendet werden kann. Null = deaktiviert.</value>
+  </data>
   <data name="PropertyDescriptionSchemaFolderOptionsRenameNode" xml:space="preserve">
     <value>Entfernt den Namen des Schemas aus dem Namen des Objektknotens.</value>
+  </data>
+  <data name="PropertyDescriptionSchemaFolderOptionsUnresponsiveTimeout" xml:space="preserve">
+    <value>Millisekunden. Durch Erhöhen erfolgt die Aktualisierung schneller, es erfolgt jedoch eine geringere Reaktionsfähigkeit.</value>
+  </data>
+  <data name="PropertyDescriptionSchemaFolderOptionsUseClear" xml:space="preserve">
+    <value>Für die Verwendung der schnelleren Methode ist eine Mindestknotenanzahl erforderlich, die jedoch während der Aktualisierung nicht reagiert. Null = deaktiviert.</value>
   </data>
   <data name="PropertyDescriptionSchemaFolderOptionsUseObjectIcon" xml:space="preserve">
     <value>Aktiviert das Verwenden des Icons des letzten Elements im Knoten des Schemaordners. Ansonsten wird das Icon des übergeordneten Knotens übernommen.</value>
@@ -150,8 +180,29 @@
   <data name="PropertyDisplayNameSchemaFolderOptionsEnabled" xml:space="preserve">
     <value>Aktiviert</value>
   </data>
+  <data name="PropertyDisplayNameSchemaFolderOptionsLevel1FolderType" xml:space="preserve">
+    <value>Ordnertyp</value>
+  </data>
+  <data name="PropertyDisplayNameSchemaFolderOptionsLevel1MinNodeCount" xml:space="preserve">
+    <value>Mindestknotenanzahl</value>
+  </data>
+  <data name="PropertyDisplayNameSchemaFolderOptionsLevel2FolderType" xml:space="preserve">
+    <value>Ordnertyp</value>
+  </data>
+  <data name="PropertyDisplayNameSchemaFolderOptionsLevel2MinNodeCount" xml:space="preserve">
+    <value>Mindestknotenanzahl</value>
+  </data>
+  <data name="PropertyDisplayNameSchemaFolderOptionsQuickSchema" xml:space="preserve">
+    <value>Schnelles Schema aus Knotentext</value>
+  </data>
   <data name="PropertyDisplayNameSchemaFolderOptionsRenameNode" xml:space="preserve">
     <value>Knoten umbenennen</value>
+  </data>
+  <data name="PropertyDisplayNameSchemaFolderOptionsUnresponsiveTimeout" xml:space="preserve">
+    <value>Zeitüberschreitung bei fehlender Reaktion</value>
+  </data>
+  <data name="PropertyDisplayNameSchemaFolderOptionsUseClear" xml:space="preserve">
+    <value>Verwenden Sie Nodes.Clear</value>
   </data>
   <data name="PropertyDisplayNameSchemaFolderOptionsUseObjectIcon" xml:space="preserve">
     <value>Icon des Objektes benutzen</value>
