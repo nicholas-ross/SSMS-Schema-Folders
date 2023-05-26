@@ -10,7 +10,7 @@ Source code, documentation and issues can be found at <https://github.com/nichol
 
 This is a fork of [SSMS2012Extender](https://github.com/NotExperiencedDev/SSMSExtension) (from when it was on CodePlex) that adds support for SSMS 2014 and 2016.
 
-You can download the latest version of SSMS for free from [Microsoft](https://docs.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms).
+You can download the latest version of SSMS for free from [Microsoft](https://learn.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms).
 
 
 ## Install
@@ -29,6 +29,8 @@ Extract the zip file and copy the folder into the SSMS extension folder. Remove 
 * 18 - Default install location is `C:\Program Files (x86)\Microsoft SQL Server Management Studio 18\Common7\IDE\Extensions`
 * 19 - Default install location is `C:\Program Files (x86)\Microsoft SQL Server Management Studio 19\Common7\IDE\Extensions`
 
+SSMS 18 and 19 allow installing in a different location. If the path above does not exist then you need to find the correct path to use.
+
 
 ## Options
 
@@ -39,6 +41,8 @@ There are a few user options which change the style and behaviour of the schema 
 * Append Dot - Add a dot after the schema name on the folder label.
 * Clone Parent Node - Add the right click and connection properties of the parent node to the schema folder node.
 * Use Object Icon - Use the icon of the child node as the folder icon. If false then use the parent node (i.e. folder) icon.
+* Folder Type - The type of sorting to use to create the folders at each folder level.
+* Minimum Node Count - Sort nodes into folders only when it contains at least this many nodes.
 * Rename Node - Removes the schema name from the object node label.
 * Quick schema from node text - Faster but inaccurate. Default disabled.
 * Unresponsive timeout - Node sort speed vs unresponsive user interface.
@@ -51,7 +55,7 @@ There are a few user options which change the style and behaviour of the schema 
 This happens when Windows security blocks running of dll files downloaded from the internet. Refer to the install instructions for the steps required to allow them to run.
 
 ### Load error
-The first time SSMS is run with the extension it will show an error message. Click `No` and restart SSMS. The included reg file sets the same registry setting as when you click the no button. This no longer happens in SSMS 18.
+In SSMS 17 and earlier, the first time it is run with the extension it will show an error message. Click `No` and restart SSMS. The included reg file sets the same registry setting as when you click the no button. This no longer happens in SSMS 18.
 
 ### Compatibility with other extensions
 This extension moves nodes in the Object Explorer tree view. This could cause problems with other extensions that are not expecting it. If you do have problems then let me know.
@@ -62,7 +66,11 @@ Please report any issues to <https://github.com/nicholas-ross/SSMS-Schema-Folder
 
 ## Change Log
 
-### v1.4 (TBA)
+### v1.5 (2023-05-26)
+* Added support for v19.1.
+* Added second folder level for alphabetical or sub schema sorting.
+
+### v1.4 (2022-07-28)
 * Added support for v19.0 (preview 2).
 * Language localisation for options. (Thank you @micjahn)
 * Performance improvments and options for very large databases.

@@ -4,7 +4,7 @@
     {
         None,
         Schema,
-        Alphabetical,
-        Custom
+        Alphabetical
+        //Custom
     }
 }
