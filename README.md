@@ -69,6 +69,7 @@ Please report any issues to <https://github.com/nicholas-ross/SSMS-Schema-Folder
 
 ### vNext (TBA)
 * Added support for v20.
+* Fixed: Timeout on initial Azure connection.
 
 ### v1.5 (2023-05-26)
 * Added support for v19.1.

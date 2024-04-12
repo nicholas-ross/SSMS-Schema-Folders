@@ -8,6 +8,6 @@ namespace SsmsSchemaFolders
         string GetNodeUrnPath(TreeNode node);
         TreeView GetObjectExplorerTreeView();
         void RenameNode(TreeNode node);
-        int ReorganizeNodes(TreeNode node, string nodeTag);
+        int ReorganizeNodes(TreeNode node, string nodeTag, bool expanding);
     }
 }

@@ -242,8 +242,9 @@ namespace SsmsSchemaFolders
         /// </summary>
         /// <param name="node">Table node to reorganize</param>
         /// <param name="nodeTag">Tag of new node</param>
+        /// <param name="expanding">Executing in AfterExpand event</param>
         /// <returns>The count of schema nodes.</returns>
-        public int ReorganizeNodes(TreeNode node, string nodeTag)
+        public int ReorganizeNodes(TreeNode node, string nodeTag, bool expanding)
         {
             if (node.Nodes.Count <= 1)
                 // 1 is the lazy expanding placeholder node.
@@ -251,9 +252,9 @@ namespace SsmsSchemaFolders
 
             if (Options.UseClear > 0 && node.Nodes.Count >= Options.UseClear)
                 //BUG: Doesn't support folder levels. Need to rewrite.
-                return ReorganizeNodesWithClear(node, nodeTag);
+                return ReorganizeNodesWithClear(node, nodeTag, expanding);
 
-            return ReorganizeNodes(node, nodeTag, 1);
+            return ReorganizeNodes(node, nodeTag, expanding, 1);
         }
 
         //Stopwatch sw = new Stopwatch();
@@ -264,8 +265,9 @@ namespace SsmsSchemaFolders
         /// <param name="node">Table node to reorganize</param>
         /// <param name="nodeTag">Tag of new node</param>
         /// <param name="folderLevel">The folder level of the current node</param>
+        /// <param name="expanding">Executing in AfterExpand event</param>
         /// <returns>The count of schema nodes.</returns>
-        private int ReorganizeNodes(TreeNode node, string nodeTag, int folderLevel)
+        private int ReorganizeNodes(TreeNode node, string nodeTag, bool expanding, int folderLevel)
         {
             debug_message("ReorganizeNodes:Level{0}", folderLevel);
 
@@ -364,7 +366,7 @@ namespace SsmsSchemaFolders
                 }
                 folderNodeList.Add(childNode);
 
-                if (unresponsive.ElapsedMilliseconds > Options.UnresponsiveTimeout)
+                if (expanding && unresponsive.ElapsedMilliseconds > Options.UnresponsiveTimeout)
                 {
                     node.TreeView.EndUpdate();
                     debug_message("Application.DoEvents():{0}", unresponsive.ElapsedMilliseconds);
@@ -417,7 +419,7 @@ namespace SsmsSchemaFolders
                     }
                     folderNode.Nodes.Add(childNode);
 
-                    if (unresponsive.ElapsedMilliseconds > Options.UnresponsiveTimeout)
+                    if (expanding && unresponsive.ElapsedMilliseconds > Options.UnresponsiveTimeout)
                     {
                         node.TreeView.EndUpdate();
                         debug_message("Application.DoEvents():{0}", unresponsive.ElapsedMilliseconds);
@@ -445,7 +447,7 @@ namespace SsmsSchemaFolders
                 foreach (string nodeName in folders.Keys)
                 {
                     //debug_message("Next ReorganizeNodes: {1} > {0}", nodeName, folderLevel);
-                    ReorganizeNodes(node.Nodes[nodeName], nodeTag, folderLevel + 1);
+                    ReorganizeNodes(node.Nodes[nodeName], nodeTag, expanding, folderLevel + 1);
                 }
             }
 
@@ -457,8 +459,9 @@ namespace SsmsSchemaFolders
         /// </summary>
         /// <param name="node">Table node to reorganize</param>
         /// <param name="nodeTag">Tag of new node</param>
+        /// <param name="expanding">Executing in AfterExpand event</param>
         /// <returns>The count of schema nodes.</returns>
-        public int ReorganizeNodesWithClear(TreeNode node, string nodeTag)
+        public int ReorganizeNodesWithClear(TreeNode node, string nodeTag, bool expanding)
         {
             debug_message("ReorganizeNodesWithClear");
 
@@ -551,7 +554,7 @@ namespace SsmsSchemaFolders
 
             //debug_message("DoEvents:{0}", sw.ElapsedMilliseconds);
 
-            if (sw.ElapsedMilliseconds > Options.UnresponsiveTimeout)
+            if (expanding && sw.ElapsedMilliseconds > Options.UnresponsiveTimeout)
             {
                 Application.DoEvents();
                 if (node.TreeView == null)
