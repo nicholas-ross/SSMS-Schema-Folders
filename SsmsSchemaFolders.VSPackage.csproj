@@ -162,6 +162,11 @@
       <Name>SsmsSchemaFolders.Ssms19</Name>
       <Aliases>Ssms19</Aliases>
     </ProjectReference>
+    <ProjectReference Include="SsmsSchemaFolders.Ssms20.csproj">
+      <Project>{fe225e51-5b7e-4100-939b-d262cc6fd169}</Project>
+      <Name>SsmsSchemaFolders.Ssms20</Name>
+      <Aliases>Ssms20</Aliases>
+    </ProjectReference>
     <ProjectReference Include="SsmsSchemaFolders.Ssms2012.csproj">
       <Project>{9c9fa743-0d5d-4847-9544-3ad0ffbad79f}</Project>
       <Name>SsmsSchemaFolders.Ssms2012</Name>

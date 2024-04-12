@@ -1,7 +1,7 @@
 
 # [SSMS Schema Folders](https://github.com/nicholas-ross/SSMS-Schema-Folders)
 
-This an extension for SQL Server Management Studio 2012, 2014, 2016, 17, 18 and 19.
+This an extension for SQL Server Management Studio 2012, 2014, 2016, 17, 18, 19 and 20.
 It groups sql objects in Object Explorer (tables, views, etc.) into schema folders.
 
 ![Object Explorer](ObjectExplorerView.png)
@@ -15,12 +15,12 @@ You can download the latest version of SSMS for free from [Microsoft](https://le
 
 ## Install
 
-[Download the latest release.](https://github.com/nicholas-ross/SSMS-Schema-Folders/releases)
+[Download the latest release from the releases page.](https://github.com/nicholas-ross/SSMS-Schema-Folders/releases)
 
 You must unblock the zip file before extracting. Right click on the zip file in Windows Explorer and select Properties. 
 If you see an `Unblock` button or checkbox then click it. 
 
-Extract the zip file and copy the folder into the SSMS extension folder. Remove or replace any previous version. For 2012-17 run the included reg file to skip the load error or click `No` when you do see the error and then restart SSMS.
+Extract the zip file and copy the `SSMS Schema Folders` folder into the SSMS extension folder. Remove or replace any previous version. For 2012-17 run the included reg file to skip the load error or click `No` when you do see the error and then restart SSMS.
 
 * 2012 - `C:\Program Files (x86)\Microsoft SQL Server\110\Tools\Binn\ManagementStudio\Extensions`
 * 2014 - `C:\Program Files (x86)\Microsoft SQL Server\120\Tools\Binn\ManagementStudio\Extensions`
@@ -28,8 +28,9 @@ Extract the zip file and copy the folder into the SSMS extension folder. Remove 
 * 17 - `C:\Program Files (x86)\Microsoft SQL Server\140\Tools\Binn\ManagementStudio\Extensions`
 * 18 - Default install location is `C:\Program Files (x86)\Microsoft SQL Server Management Studio 18\Common7\IDE\Extensions`
 * 19 - Default install location is `C:\Program Files (x86)\Microsoft SQL Server Management Studio 19\Common7\IDE\Extensions`
+* 20 - Default install location is `C:\Program Files (x86)\Microsoft SQL Server Management Studio 20\Common7\IDE\Extensions`
 
-SSMS 18 and 19 allow installing in a different location. If the path above does not exist then you need to find the correct path to use.
+SSMS 18 and above allow installing in a different location. If the path above does not exist then you need to find the correct path to use.
 
 
 ## Options
@@ -65,6 +66,9 @@ Please report any issues to <https://github.com/nicholas-ross/SSMS-Schema-Folder
 
 
 ## Change Log
+
+### vNext (TBA)
+* Added support for v20.
 
 ### v1.5 (2023-05-26)
 * Added support for v19.1.

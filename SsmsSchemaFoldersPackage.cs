@@ -4,6 +4,7 @@ extern alias Ssms2016;
 extern alias Ssms2017;
 extern alias Ssms18;
 extern alias Ssms19;
+extern alias Ssms20;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using System;
@@ -119,6 +120,10 @@ namespace SsmsSchemaFolders
 
                     switch (ssmsInterfacesVersion.FileMajorPart)
                     {
+                        case 20:
+                            debug_message("SsmsVersion:20");
+                            return new Ssms20::SsmsSchemaFolders.ObjectExplorerExtender(this, Options);
+
                         case 19: // v19.1 changed file version numbers
                         case 16:
                             debug_message("SsmsVersion:19");
@@ -154,8 +159,8 @@ namespace SsmsSchemaFolders
                     }
                 }
 
-                ActivityLogEntry(__ACTIVITYLOG_ENTRYTYPE.ALE_WARNING, "Unknown SSMS Version. Defaulting to 19.");
-                return new Ssms19::SsmsSchemaFolders.ObjectExplorerExtender(this, Options);
+                ActivityLogEntry(__ACTIVITYLOG_ENTRYTYPE.ALE_WARNING, "Unknown SSMS Version. Defaulting to 20.");
+                return new Ssms20::SsmsSchemaFolders.ObjectExplorerExtender(this, Options);
             }
             catch (Exception ex)
             {
