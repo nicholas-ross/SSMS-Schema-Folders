@@ -51,6 +51,10 @@ namespace SsmsSchemaFolders
                     if (schema != null && Options.Level1FolderType == Options.Level2FolderType)
                     {
                         int dotIndex = schema.IndexOf('.');
+                        if (dotIndex == -1)
+                        {
+                            dotIndex = schema.IndexOf('_');
+                        }
                         if (dotIndex != -1)
                         {
                             schema = (folderLevel == 1) ? schema.Substring(0, dotIndex) : schema.Substring(dotIndex + 1);
