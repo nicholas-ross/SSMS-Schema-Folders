@@ -144,6 +144,9 @@
   <data name="PropertyDescriptionSchemaFolderOptionsEnabled" xml:space="preserve">
     <value>Group sql objects in Object Explorer (tables, views, etc.) into schema folders.</value>
   </data>
+  <data name="PropertyDescriptionSchemaFolderOptionsEnabledModifierKeys" xml:space="preserve">
+    <value>Hold the modifier keys down to do the opposite of the Enabled setting. The letter key (or None) in the setting is not used but is required by the settings editor. To change a folder that has already been opened, right-click the folder and select refresh while holding the keys.</value>
+  </data>
   <data name="PropertyDescriptionSchemaFolderOptionsLevel1FolderType" xml:space="preserve">
     <value>The type of sorting to use to create the folders.</value>
   </data>
@@ -179,6 +182,9 @@
   </data>
   <data name="PropertyDisplayNameSchemaFolderOptionsEnabled" xml:space="preserve">
     <value>Enabled</value>
+  </data>
+  <data name="PropertyDisplayNameSchemaFolderOptionsEnabledModifierKeys" xml:space="preserve">
+    <value>Modifier Keys</value>
   </data>
   <data name="PropertyDisplayNameSchemaFolderOptionsLevel1FolderType" xml:space="preserve">
     <value>Folder Type</value>

@@ -256,13 +256,20 @@ namespace SsmsSchemaFolders
         /// <param name="e">expanding node</param>
         void ObjectExplorerTreeViewAfterExpandCallback(object sender, TreeViewEventArgs e)
         {
-            debug_message("\nObjectExplorerTreeViewAfterExpandCallback:{0}", e.Node.Text);
+            debug_message("\nObjectExplorerTreeViewAfterExpandCallback:{0}:{1}", e.Node.Text, Form.ModifierKeys);
             // Wait for the async node expand to finish or we could miss nodes
             try
             {
                 debug_message("Node.Count:{0}", e.Node.GetNodeCount(false));
 
-                if (!Options.Enabled)
+                if (Options.EnabledModifierKeys != Keys.None)
+                {
+                    var modifierKeys = Options.EnabledModifierKeys & Keys.Modifiers;
+                    if (Options.Enabled && Form.ModifierKeys == modifierKeys
+                        || !Options.Enabled && Form.ModifierKeys != modifierKeys)
+                        return;
+                }
+                else if (!Options.Enabled)
                     return;
 
                 if (e.Node.TreeView.InvokeRequired)
@@ -333,10 +340,18 @@ namespace SsmsSchemaFolders
         /// <param name="e"></param>
         void ObjectExplorerTreeViewBeforeExpandCallback(object sender, TreeViewCancelEventArgs e)
         {
-            debug_message("\nObjectExplorerTreeViewBeforeExpandCallback:{0}", e.Node.Text);
+            debug_message("\nObjectExplorerTreeViewBeforeExpandCallback:{0}:{1}", e.Node.Text, Form.ModifierKeys);
             try
             {
-                if (!Options.Enabled)
+
+                if (Options.EnabledModifierKeys != Keys.None)
+                {
+                    var modifierKeys = Options.EnabledModifierKeys & Keys.Modifiers;
+                    if (Options.Enabled && Form.ModifierKeys == modifierKeys
+                        || !Options.Enabled && Form.ModifierKeys != modifierKeys)
+                        return;
+                }
+                else if (!Options.Enabled)
                     return;
 
                 var nodeCount = e.Node.GetNodeCount(false);

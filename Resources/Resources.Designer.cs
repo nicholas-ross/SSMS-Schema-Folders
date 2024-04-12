@@ -142,6 +142,15 @@ namespace SsmsSchemaFolders.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hold the modifier keys down to do the opposite of the Enabled setting. The letter key (or None) in the setting is not used but is required by the settings editor. To change a folder that has already been opened, right-click the folder and select refresh while holding the keys..
+        /// </summary>
+        internal static string PropertyDescriptionSchemaFolderOptionsEnabledModifierKeys {
+            get {
+                return ResourceManager.GetString("PropertyDescriptionSchemaFolderOptionsEnabledModifierKeys", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The type of sorting to use to create the folders..
         /// </summary>
         internal static string PropertyDescriptionSchemaFolderOptionsLevel1FolderType {
@@ -246,6 +255,15 @@ namespace SsmsSchemaFolders.Resources {
         internal static string PropertyDisplayNameSchemaFolderOptionsEnabled {
             get {
                 return ResourceManager.GetString("PropertyDisplayNameSchemaFolderOptionsEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Modifier Keys.
+        /// </summary>
+        internal static string PropertyDisplayNameSchemaFolderOptionsEnabledModifierKeys {
+            get {
+                return ResourceManager.GetString("PropertyDisplayNameSchemaFolderOptionsEnabledModifierKeys", resourceCulture);
             }
         }
         

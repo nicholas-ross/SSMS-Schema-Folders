@@ -39,6 +39,7 @@ There are a few user options which change the style and behaviour of the schema 
 `Tools > Options > SQL Server Object Explorer > Schema Folders`
 
 * Enabled - So you can disable the extension without uninstalling it.
+* Modifier Keys - Hold these keys to do the opposite of the enabled setting. Default Ctrl.
 * Append Dot - Add a dot after the schema name on the folder label.
 * Clone Parent Node - Add the right click and connection properties of the parent node to the schema folder node.
 * Use Object Icon - Use the icon of the child node as the folder icon. If false then use the parent node (i.e. folder) icon.
@@ -69,6 +70,7 @@ Please report any issues to <https://github.com/nicholas-ross/SSMS-Schema-Folder
 
 ### vNext (TBA)
 * Added support for v20.
+* Added enabled modifier keys.
 * Fixed: Timeout on initial Azure connection.
 
 ### v1.5 (2023-05-26)
