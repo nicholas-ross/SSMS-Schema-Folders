@@ -191,6 +191,12 @@ namespace SsmsSchemaFolders
                 //if (match.Success)
                 //    return match.Groups[1].Value;
 
+                //debug_message("ni:{0}", sw.ElapsedMilliseconds);
+                //var name = ni.Name;
+                //debug_message("ni.Name:{0}", sw.ElapsedMilliseconds);
+                //var invariantName = ni.InvariantName;
+                //debug_message("ni.InvariantName:{0}", sw.ElapsedMilliseconds);
+
                 if (ni.InvariantName.EndsWith("." + ni.Name))
                     return ni.InvariantName.Substring(0, ni.InvariantName.Length - ni.Name.Length - 1);
             }
@@ -246,6 +252,8 @@ namespace SsmsSchemaFolders
             return ReorganizeNodes(node, nodeTag, 1);
         }
 
+        //Stopwatch sw = new Stopwatch();
+
         /// <summary>
         /// Create schema nodes and move tables, functions and stored procedures under its schema node
         /// </summary>
@@ -255,7 +263,7 @@ namespace SsmsSchemaFolders
         /// <returns>The count of schema nodes.</returns>
         private int ReorganizeNodes(TreeNode node, string nodeTag, int folderLevel)
         {
-            debug_message("ReorganizeNodes");
+            debug_message("ReorganizeNodes:Level{0}", folderLevel);
 
             //BUG: folder node count should be ignored on after expanding event
             // First 50 have already been sorted which will affect the count.
@@ -269,6 +277,7 @@ namespace SsmsSchemaFolders
             var quickAndDirty = (Options.QuickSchema > 0 && node.Nodes.Count > Options.QuickSchema);
 
             //var sw = Stopwatch.StartNew();
+            //sw.Restart();
             //debug_message("BeginUpdate:{0}", sw.ElapsedMilliseconds);
 
             node.TreeView.BeginUpdate();
@@ -286,6 +295,8 @@ namespace SsmsSchemaFolders
 
             foreach (TreeNode childNode in node.Nodes)
             {
+                //debug_message("  {0}:{1}", childNode.Text, sw.ElapsedMilliseconds);
+
                 //skip schema node folders but make sure they are in the folders list
                 if (childNode.Tag != null && childNode.Tag.ToString() == nodeTag)
                 {
@@ -297,7 +308,11 @@ namespace SsmsSchemaFolders
                     continue;
                 }
 
+                //debug_message("GetFolderName:begin:{0}", sw.ElapsedMilliseconds);
+
                 string folderName = GetFolderName(childNode, folderLevel, quickAndDirty);
+
+                //debug_message("GetFolderName:end:{0}", sw.ElapsedMilliseconds);
 
                 if (string.IsNullOrEmpty(folderName))
                     continue;
@@ -348,6 +363,7 @@ namespace SsmsSchemaFolders
                 if (unresponsive.ElapsedMilliseconds > Options.UnresponsiveTimeout)
                 {
                     node.TreeView.EndUpdate();
+                    debug_message("Application.DoEvents():{0}", unresponsive.ElapsedMilliseconds);
                     Application.DoEvents();
                     if (node.TreeView == null)
                         return 0;
@@ -357,6 +373,7 @@ namespace SsmsSchemaFolders
             }
 
             //debug_message("Move Nodes:{0}", sw.ElapsedMilliseconds);
+            debug_message("Move Nodes");
 
             if (folderNodeIndex >= 0)
             {
@@ -398,7 +415,8 @@ namespace SsmsSchemaFolders
 
                     if (unresponsive.ElapsedMilliseconds > Options.UnresponsiveTimeout)
                     {
-                        node.TreeView.EndUpdate(); 
+                        node.TreeView.EndUpdate();
+                        debug_message("Application.DoEvents():{0}", unresponsive.ElapsedMilliseconds);
                         Application.DoEvents();
                         if (node.TreeView == null)
                             return 0;
