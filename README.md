@@ -68,7 +68,7 @@ Please report any issues to <https://github.com/nicholas-ross/SSMS-Schema-Folder
 
 ## Change Log
 
-### vNext (TBA)
+### v1.6 (2024-04-12)
 * Added support for v20.
 * Added enabled modifier keys.
 * Fixed: Timeout on initial Azure connection.
