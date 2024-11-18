@@ -1,36 +1,39 @@
 
 # [SSMS Schema Folders](https://github.com/nicholas-ross/SSMS-Schema-Folders)
 
-This an extension for SQL Server Management Studio 2012, 2014, 2016, 17, 18, 19 and 20.
-It groups sql objects in Object Explorer (tables, views, etc.) into schema folders.
+This an extension for SQL Server Management Studio (SSMS). It groups sql objects in Object Explorer (tables, views, etc.) into schema folders.
 
 ![Object Explorer](ObjectExplorerView.png)
 
 Source code, documentation and issues can be found at <https://github.com/nicholas-ross/SSMS-Schema-Folders>
 
-This is a fork of [SSMS2012Extender](https://github.com/NotExperiencedDev/SSMSExtension) (from when it was on CodePlex) that adds support for SSMS 2014 and 2016.
+This is a fork of [SSMS2012Extender](https://github.com/NotExperiencedDev/SSMSExtension) (from when it was on CodePlex) that adds support for later SSMS versions.
 
 You can download the latest version of SSMS for free from [Microsoft](https://learn.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms).
 
 
 ## Install
 
+### SSMS 18 and above
+
 [Download the latest release from the releases page.](https://github.com/nicholas-ross/SSMS-Schema-Folders/releases)
 
 You must unblock the zip file before extracting. Right click on the zip file in Windows Explorer and select Properties. 
 If you see an `Unblock` button or checkbox then click it. 
 
-Extract the zip file and copy the `SSMS Schema Folders` folder into the SSMS extension folder. Remove or replace any previous version. For 2012-17 run the included reg file to skip the load error or click `No` when you do see the error and then restart SSMS.
+Extract the zip file and copy the `SSMS Schema Folders` folder into the SSMS extension folder. Remove or replace any previous version.
 
-* 2012 - `C:\Program Files (x86)\Microsoft SQL Server\110\Tools\Binn\ManagementStudio\Extensions`
-* 2014 - `C:\Program Files (x86)\Microsoft SQL Server\120\Tools\Binn\ManagementStudio\Extensions`
-* 2016 - `C:\Program Files (x86)\Microsoft SQL Server\130\Tools\Binn\ManagementStudio\Extensions`
-* 17 - `C:\Program Files (x86)\Microsoft SQL Server\140\Tools\Binn\ManagementStudio\Extensions`
-* 18 - Default install location is `C:\Program Files (x86)\Microsoft SQL Server Management Studio 18\Common7\IDE\Extensions`
-* 19 - Default install location is `C:\Program Files (x86)\Microsoft SQL Server Management Studio 19\Common7\IDE\Extensions`
-* 20 - Default install location is `C:\Program Files (x86)\Microsoft SQL Server Management Studio 20\Common7\IDE\Extensions`
+SSMS allows installing in a different location. The default paths are listed below. If the path does not exist then you need to find the correct path to use.
 
-SSMS 18 and above allow installing in a different location. If the path above does not exist then you need to find the correct path to use.
+* 18 - `C:\Program Files (x86)\Microsoft SQL Server Management Studio 18\Common7\IDE\Extensions`
+* 19 - `C:\Program Files (x86)\Microsoft SQL Server Management Studio 19\Common7\IDE\Extensions`
+* 20 - `C:\Program Files (x86)\Microsoft SQL Server Management Studio 20\Common7\IDE\Extensions`
+
+### SSMS 2012, 2014, 2016, 17
+
+The last supported version of this extension for these SSMS versions is v1.6. The [code is available by the tag v1.6](https://github.com/nicholas-ross/SSMS-Schema-Folders/tree/v1.6) and the [extension download in releases v1.6](https://github.com/nicholas-ross/SSMS-Schema-Folders/releases/tag/v1.6).
+
+Version 1.4 introduced the requirement for .Net Framework version 4.7.2. Previous versions use 4.5.2.
 
 
 ## Options
@@ -56,9 +59,6 @@ There are a few user options which change the style and behaviour of the schema 
 ### Not running/No options
 This happens when Windows security blocks running of dll files downloaded from the internet. Refer to the install instructions for the steps required to allow them to run.
 
-### Load error
-In SSMS 17 and earlier, the first time it is run with the extension it will show an error message. Click `No` and restart SSMS. The included reg file sets the same registry setting as when you click the no button. This no longer happens in SSMS 18.
-
 ### Compatibility with other extensions
 This extension moves nodes in the Object Explorer tree view. This could cause problems with other extensions that are not expecting it. If you do have problems then let me know.
 * Red Gate SQL Search - When trying to select the object in Object Explorer from the search results, it will loop through the nodes comparing the node text. It doesn't check subfolders for most object types so will be unable to select the correct object.
@@ -68,7 +68,7 @@ Please report any issues to <https://github.com/nicholas-ross/SSMS-Schema-Folder
 
 ## Change Log
 
-### v1.6 (2024-04-12)
+### v1.6 (2024-04-12) *Last version to support SSMS 17 and earlier
 * Added support for v20.
 * Added enabled modifier keys.
 * Fixed: Timeout on initial Azure connection.
