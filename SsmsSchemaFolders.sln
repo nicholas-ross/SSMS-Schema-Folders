@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsmsSchemaFolders.Ssms19", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsmsSchemaFolders.Ssms20", "SsmsSchemaFolders.Ssms20.csproj", "{FE225E51-5B7E-4100-939B-D262CC6FD169}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsmsSchemaFolders.Ssms21", "SsmsSchemaFolders.Ssms21.csproj", "{4B46B4AF-ACCB-4825-A40F-6E74C33E7599}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{FE225E51-5B7E-4100-939B-D262CC6FD169}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE225E51-5B7E-4100-939B-D262CC6FD169}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FE225E51-5B7E-4100-939B-D262CC6FD169}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B46B4AF-ACCB-4825-A40F-6E74C33E7599}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B46B4AF-ACCB-4825-A40F-6E74C33E7599}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B46B4AF-ACCB-4825-A40F-6E74C33E7599}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B46B4AF-ACCB-4825-A40F-6E74C33E7599}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
