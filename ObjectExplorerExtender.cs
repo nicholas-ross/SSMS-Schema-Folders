@@ -78,6 +78,16 @@ namespace SsmsSchemaFolders
                     }
                     break;
 
+                case FolderType.LeftOfUnderscore:
+                    var name = GetNodeName(node);
+                    //debug_message("{0} > {1}", node.Text, name);
+
+                    if (!string.IsNullOrEmpty(name))
+                    {
+                        return name.Substring(0, name.IndexOf('_'));
+                    }
+                    break;
+
             }
             return null;
         }
