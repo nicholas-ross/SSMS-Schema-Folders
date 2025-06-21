@@ -69,7 +69,7 @@ Please report any issues to <https://github.com/nicholas-ross/SSMS-Schema-Folder
 
 ## Change Log
 
-### vNext (TBA)
+### v1.7 (2025-06-21)
 * Added support for v21.
 
 ### v1.6 (2024-04-12) *Last version to support SSMS 17 and earlier
