@@ -78,14 +78,14 @@
         [CategoryResources(nameof(SchemaFolderOptions) + "FolderLevel2")]
         [DisplayNameResources(nameof(SchemaFolderOptions) + nameof(Level2FolderType))]
         [DescriptionResources(nameof(SchemaFolderOptions) + nameof(Level2FolderType))]
-        [DefaultValue(FolderType.Alphabetical)]
-        public FolderType Level2FolderType { get; set; } = FolderType.Alphabetical;
+        [DefaultValue(FolderType.None)]
+        public FolderType Level2FolderType { get; set; } = FolderType.None;
 
         [CategoryResources(nameof(SchemaFolderOptions) + "FolderLevel2")]
         [DisplayNameResources(nameof(SchemaFolderOptions) + nameof(Level2MinNodeCount))]
         [DescriptionResources(nameof(SchemaFolderOptions) + nameof(Level2MinNodeCount))]
-        [DefaultValue(200)]
-        public int Level2MinNodeCount { get; set; } = 200;
+        [DefaultValue(0)]
+        public int Level2MinNodeCount { get; set; } = 0;
 
     }
 }
