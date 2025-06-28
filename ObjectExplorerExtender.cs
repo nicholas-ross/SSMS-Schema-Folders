@@ -81,11 +81,15 @@ namespace SsmsSchemaFolders
                     string regex = (folderLevel == 1) ? Options.Level1Regex : Options.Level2Regex;
                     if (!string.IsNullOrEmpty(regex))
                     {
-                        var nameRegex = new Regex(regex);
-                        var match = nameRegex.Match(GetNodeName(node));
-                        if (match.Success && match.Groups.Count > 1)
+                        var nodeName = GetNodeName(node);
+                        if (!string.IsNullOrEmpty(nodeName))
                         {
-                            return match.Groups[1].Value;
+                            var nameRegex = new Regex(regex);
+                            var match = nameRegex.Match(nodeName);
+                            if (match.Success && match.Groups.Count > 1)
+                            {
+                                return match.Groups[1].Value;
+                            }
                         }
                     }
                     break;
