@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Reflection;
 using System.Windows.Forms;
+using System.Linq;
 
 namespace SsmsSchemaFolders
 {
@@ -78,20 +79,48 @@ namespace SsmsSchemaFolders
                     }
                     break;
                 case FolderType.Regex:
+                case FolderType.Regex_Group_Other:
                     string regex = (folderLevel == 1) ? Options.Level1Regex : Options.Level2Regex;
+                    DebugLogger.Log("GetFolderName: Node: '{0}', Regex: '{1}'", node.Text, regex);
                     if (!string.IsNullOrEmpty(regex))
                     {
                         var nodeName = GetNodeName(node);
+                        if (string.IsNullOrEmpty(nodeName))
+                        {
+                            var text = node.Text;
+                            var dotIndex = text.IndexOf('.');
+                            if (dotIndex >= 0)
+                            {
+                                nodeName = text.Substring(dotIndex + 1);
+                            }
+                            else
+                            {
+                                nodeName = text;
+                            }
+                        }
+                        DebugLogger.Log("GetFolderName: Derived NodeName: '{0}'", nodeName);
+
                         if (!string.IsNullOrEmpty(nodeName))
                         {
-                            var nameRegex = new Regex(regex);
+                            var nameRegex = new Regex(regex, RegexOptions.IgnoreCase);
                             var match = nameRegex.Match(nodeName);
                             if (match.Success && match.Groups.Count > 1)
                             {
-                                return match.Groups[1].Value;
+                                var folder = match.Groups[1].Value;
+                                DebugLogger.Log("GetFolderName: Match success, returning folder: '{0}'", folder);
+                                return folder;
                             }
+                            
+                            if (folderType == FolderType.Regex_Group_Other)
+                            {
+                                DebugLogger.Log("GetFolderName: No match, returning 'Other'");
+                                return "Other";
+                            }
+                            DebugLogger.Log("GetFolderName: No match, returning null");
+                            return null;
                         }
                     }
+                    DebugLogger.Log("GetFolderName: No regex or nodename, returning null");
                     break;
             }
             return null;
@@ -290,11 +319,9 @@ namespace SsmsSchemaFolders
         /// <returns>The count of schema nodes.</returns>
         private int ReorganizeNodes(TreeNode node, string nodeTag, bool expanding, int folderLevel)
         {
-            debug_message("ReorganizeNodes:Level{0}", folderLevel);
+            DebugLogger.Log("ReorganizeNodes: Starting for node '{0}', child count: {1}, folder level: {2}", node.Text, node.Nodes.Count, folderLevel);
 
-            //BUG: folder node count should be ignored on after expanding event
-            // First 50 have already been sorted which will affect the count.
-            if (node.Nodes.Count < GetFolderLevelMinNodeCount(folderLevel))
+            if (!expanding && node.Nodes.Count < GetFolderLevelMinNodeCount(folderLevel))
                 return 0;
             
             var nodeText = node.Text;
@@ -320,8 +347,9 @@ namespace SsmsSchemaFolders
 
             //debug_message("Sort Nodes:{0}", sw.ElapsedMilliseconds);
 
-            foreach (TreeNode childNode in node.Nodes)
+            foreach (TreeNode childNode in node.Nodes.Cast<TreeNode>().ToList())
             {
+                DebugLogger.Log("ReorganizeNodes: Processing child node '{0}'", childNode.Text);
                 //debug_message("  {0}:{1}", childNode.Text, sw.ElapsedMilliseconds);
 
                 //skip schema node folders but make sure they are in the folders list
@@ -338,11 +366,15 @@ namespace SsmsSchemaFolders
                 //debug_message("GetFolderName:begin:{0}", sw.ElapsedMilliseconds);
 
                 string folderName = GetFolderName(childNode, folderLevel, quickAndDirty);
+                DebugLogger.Log("ReorganizeNodes: Child node '{0}' assigned to folder: '{1}'", childNode.Text, folderName ?? "null");
 
                 //debug_message("GetFolderName:end:{0}", sw.ElapsedMilliseconds);
 
                 if (string.IsNullOrEmpty(folderName))
+                {
+                    DebugLogger.Log("ReorganizeNodes: Skipping child node '{0}' due to empty folder name.", childNode.Text);
                     continue;
+                }
 
                 //create schema node
                 if (!node.Nodes.ContainsKey(folderName))
@@ -401,6 +433,7 @@ namespace SsmsSchemaFolders
 
             //debug_message("Move Nodes:{0}", sw.ElapsedMilliseconds);
             debug_message("Move Nodes");
+            DebugLogger.Log("ReorganizeNodes: Moving nodes to folders. Folder count: {0}", folders.Count);
 
             if (folderNodeIndex >= 0)
             {
@@ -458,6 +491,7 @@ namespace SsmsSchemaFolders
             node.TreeView.EndUpdate();
             node.Text = nodeText;
             unresponsive.Stop();
+            DebugLogger.Log("ReorganizeNodes: Finished for node '{0}'", node.Text);
 
             //debug_message("Done:{0}", sw.ElapsedMilliseconds);
             //sw.Stop();
@@ -467,6 +501,10 @@ namespace SsmsSchemaFolders
             {
                 foreach (string nodeName in folders.Keys)
                 {
+                    if (nodeName == "Other")
+                    {
+                        continue;
+                    }
                     //debug_message("Next ReorganizeNodes: {1} > {0}", nodeName, folderLevel);
                     ReorganizeNodes(node.Nodes[nodeName], nodeTag, expanding, folderLevel + 1);
                 }
@@ -632,6 +670,22 @@ namespace SsmsSchemaFolders
         {
             TreeNode tx = x as TreeNode;
             TreeNode ty = y as TreeNode;
+
+            if (string.Equals(tx.Text, "Other", StringComparison.CurrentCultureIgnoreCase))
+            {
+                if (!string.Equals(ty.Text, "Other", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    return 1;
+                }
+            }
+            else
+            {
+                if (string.Equals(ty.Text, "Other", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    return -1;
+                }
+            }
+            
             return string.Compare(tx.Text, ty.Text, true);
         }
     }
