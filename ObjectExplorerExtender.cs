@@ -265,11 +265,17 @@ namespace SsmsSchemaFolders
                 // 1 is the lazy expanding placeholder node.
                 return 0;
 
-            if (Options.UseClear > 0 && node.Nodes.Count >= Options.UseClear)
-                //BUG: Doesn't support folder levels. Need to rewrite.
-                return ReorganizeNodesWithClear(node, nodeTag, expanding);
+            if (!string.IsNullOrWhiteSpace(nodeTag) && node.Tag != null && node.Tag.ToString().Contains(nodeTag))
+                // Already done this node.
+                return 0;
 
-            return ReorganizeNodes(node, nodeTag, expanding, 1);
+            int nodesReorganized = ReorganizeNodes(node, nodeTag, expanding, 1);
+            if (nodesReorganized > 0)
+            {
+                // Re-sort nodes
+                node.TreeView.TreeViewNodeSorter = new SchemaFolderNodeSorter();
+            }
+            return nodesReorganized;
         }
 
         //Stopwatch sw = new Stopwatch();
@@ -613,12 +619,20 @@ namespace SsmsSchemaFolders
         [System.Diagnostics.Conditional("DEBUG")]
         private void debug_message(string message, params object[] args)
         {
-            if (Package is IDebugOutput)
-            {
-                ((IDebugOutput)Package).debug_message(message, args);
-            }
+            //Trace.WriteLine(string.Format(message, args));
+            var output = (IDebugOutput)Package.GetService(typeof(IDebugOutput));
+            output.debug_message(string.Format(message, args));
         }
 
     }
 
+    public class SchemaFolderNodeSorter : System.Collections.IComparer
+    {
+        public int Compare(object x, object y)
+        {
+            TreeNode tx = x as TreeNode;
+            TreeNode ty = y as TreeNode;
+            return string.Compare(tx.Text, ty.Text, true);
+        }
+    }
 }
