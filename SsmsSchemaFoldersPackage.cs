@@ -341,7 +341,7 @@ namespace SsmsSchemaFolders
                     //    debug_message(node.Text);
                     //}
                     //doing a reorg before expand stops the treeview from jumping
-                    //ReorganizeFolders(e.Node);
+                    ReorganizeFolders(e.Node);
                 }
                 else
                 {

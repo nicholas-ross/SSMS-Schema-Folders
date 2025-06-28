@@ -9,5 +9,7 @@ namespace SsmsSchemaFolders
         TreeView GetObjectExplorerTreeView();
         void RenameNode(TreeNode node);
         int ReorganizeNodes(TreeNode node, string nodeTag, bool expanding);
+        int ReorganizeNodesWithClear(TreeNode node, string nodeTag, bool expanding);
+        string GetFolderName(TreeNode node, int folderLevel, bool quickSchemaName, bool expanding);
     }
 }

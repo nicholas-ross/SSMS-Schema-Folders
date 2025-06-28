@@ -31,7 +31,7 @@ namespace SsmsSchemaFolders
         }
 
 
-        public string GetFolderName(TreeNode node, int folderLevel, bool quickSchemaName)
+        public string GetFolderName(TreeNode node, int folderLevel, bool quickSchemaName, bool expanding)
         {
             FolderType folderType = FolderType.None;
             switch (folderLevel)
@@ -111,7 +111,7 @@ namespace SsmsSchemaFolders
                                 return folder;
                             }
                             
-                            if (folderType == FolderType.Regex_Group_Other)
+                            if (expanding && folderType == FolderType.Regex_Group_Other)
                             {
                                 DebugLogger.Log("GetFolderName: No match, returning 'Other'");
                                 return "Other";
@@ -365,7 +365,7 @@ namespace SsmsSchemaFolders
 
                 //debug_message("GetFolderName:begin:{0}", sw.ElapsedMilliseconds);
 
-                string folderName = GetFolderName(childNode, folderLevel, quickAndDirty);
+                string folderName = GetFolderName(childNode, folderLevel, quickAndDirty, expanding);
                 DebugLogger.Log("ReorganizeNodes: Child node '{0}' assigned to folder: '{1}'", childNode.Text, folderName ?? "null");
 
                 //debug_message("GetFolderName:end:{0}", sw.ElapsedMilliseconds);
