@@ -79,7 +79,6 @@ namespace SsmsSchemaFolders
                     }
                     break;
                 case FolderType.Regex:
-                case FolderType.Regex_Group_Other:
                     string regex = (folderLevel == 1) ? Options.Level1Regex : Options.Level2Regex;
                     DebugLogger.Log("GetFolderName: Node: '{0}', Regex: '{1}'", node.Text, regex);
                     if (!string.IsNullOrEmpty(regex))
@@ -111,7 +110,8 @@ namespace SsmsSchemaFolders
                                 return folder;
                             }
                             
-                            if (expanding && folderType == FolderType.Regex_Group_Other)
+                            bool groupAsOther = (folderLevel == 1) ? Options.Level1GroupNonMatchingAsOther : Options.Level2GroupNonMatchingAsOther;
+                            if (expanding && groupAsOther)
                             {
                                 DebugLogger.Log("GetFolderName: No match, returning 'Other'");
                                 return "Other";
@@ -414,7 +414,7 @@ namespace SsmsSchemaFolders
                     if (Options.AppendDot)
                         folderNode.Text += ".";
 
-                    if (Options.UseObjectIcon && folderType != FolderType.Regex && folderType != FolderType.Regex_Group_Other)
+                    if (Options.UseObjectIcon && folderType != FolderType.Regex)
                     {
                         folderNode.ImageIndex = childNode.ImageIndex;
                         folderNode.SelectedImageIndex = childNode.ImageIndex;

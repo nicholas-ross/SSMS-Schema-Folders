@@ -5,8 +5,7 @@
         None,
         Schema,
         Alphabetical,
-        Regex,
-        Regex_Group_Other
+        Regex
         //Custom
     }
 }

@@ -81,6 +81,12 @@
         [DefaultValue("")]
         public string Level1Regex { get; set; } = "";
 
+        [CategoryResources(nameof(SchemaFolderOptions) + "FolderLevel1")]
+        [DisplayNameResources(nameof(SchemaFolderOptions) + nameof(Level1GroupNonMatchingAsOther))]
+        [DescriptionResources(nameof(SchemaFolderOptions) + nameof(Level1GroupNonMatchingAsOther))]
+        [DefaultValue(false)]
+        public bool Level1GroupNonMatchingAsOther { get; set; } = false;
+
         [CategoryResources(nameof(SchemaFolderOptions) + "FolderLevel2")]
         [DisplayNameResources(nameof(SchemaFolderOptions) + nameof(Level2FolderType))]
         [DescriptionResources(nameof(SchemaFolderOptions) + nameof(Level2FolderType))]
@@ -98,5 +104,11 @@
         [DescriptionResources(nameof(SchemaFolderOptions) + nameof(Level2Regex))]
         [DefaultValue("")]
         public string Level2Regex { get; set; } = "";
+
+        [CategoryResources(nameof(SchemaFolderOptions) + "FolderLevel2")]
+        [DisplayNameResources(nameof(SchemaFolderOptions) + nameof(Level2GroupNonMatchingAsOther))]
+        [DescriptionResources(nameof(SchemaFolderOptions) + nameof(Level2GroupNonMatchingAsOther))]
+        [DefaultValue(false)]
+        public bool Level2GroupNonMatchingAsOther { get; set; } = false;
     }
 }

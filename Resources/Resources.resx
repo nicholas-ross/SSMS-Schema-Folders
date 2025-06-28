@@ -156,6 +156,9 @@
   <data name="PropertyDescriptionSchemaFolderOptionsLevel1Regex" xml:space="preserve">
     <value>The regex pattern to use for grouping. Only used if Folder Type is Regex.</value>
   </data>
+  <data name="PropertyDescriptionSchemaFolderOptionsLevel1GroupNonMatchingAsOther" xml:space="preserve">
+    <value>Group items that do not match the regex into a folder named 'Other'. Only used if Folder Type is Regex.</value>
+  </data>
   <data name="PropertyDescriptionSchemaFolderOptionsLevel2FolderType" xml:space="preserve">
     <value>The type of sorting to use to create the folders.</value>
   </data>
@@ -164,6 +167,9 @@
   </data>
   <data name="PropertyDescriptionSchemaFolderOptionsLevel2Regex" xml:space="preserve">
     <value>The regex pattern to use for grouping. Only used if Folder Type is Regex.</value>
+  </data>
+  <data name="PropertyDescriptionSchemaFolderOptionsLevel2GroupNonMatchingAsOther" xml:space="preserve">
+    <value>Group items that do not match the regex into a folder named 'Other'. Only used if Folder Type is Regex.</value>
   </data>
   <data name="PropertyDescriptionSchemaFolderOptionsQuickSchema" xml:space="preserve">
     <value>Min node count required before using faster but inaccurate method to get schema. Zero = disabled.</value>
@@ -201,6 +207,9 @@
   <data name="PropertyDisplayNameSchemaFolderOptionsLevel1Regex" xml:space="preserve">
     <value>Regex Pattern</value>
   </data>
+  <data name="PropertyDisplayNameSchemaFolderOptionsLevel1GroupNonMatchingAsOther" xml:space="preserve">
+    <value>Group Non-Matching as 'Other'</value>
+  </data>
   <data name="PropertyDisplayNameSchemaFolderOptionsLevel2FolderType" xml:space="preserve">
     <value>Folder Type</value>
   </data>
@@ -209,6 +218,9 @@
   </data>
   <data name="PropertyDisplayNameSchemaFolderOptionsLevel2Regex" xml:space="preserve">
     <value>Regex Pattern</value>
+  </data>
+  <data name="PropertyDisplayNameSchemaFolderOptionsLevel2GroupNonMatchingAsOther" xml:space="preserve">
+    <value>Group Non-Matching as 'Other'</value>
   </data>
   <data name="PropertyDisplayNameSchemaFolderOptionsQuickSchema" xml:space="preserve">
     <value>Quick schema from node text</value>
