@@ -328,6 +328,18 @@ namespace SsmsSchemaFolders
             if (!expanding && node.Nodes.Count < GetFolderLevelMinNodeCount(folderLevel))
                 return 0;
             
+            FolderType folderType = FolderType.None;
+            switch (folderLevel)
+            {
+                case 1:
+                    folderType = Options.Level1FolderType;
+                    break;
+
+                case 2:
+                    folderType = Options.Level2FolderType;
+                    break;
+            }
+            
             var nodeText = node.Text;
             node.Text += " (sorting...)";
             //node.TreeView.Update();
@@ -402,7 +414,7 @@ namespace SsmsSchemaFolders
                     if (Options.AppendDot)
                         folderNode.Text += ".";
 
-                    if (Options.UseObjectIcon)
+                    if (Options.UseObjectIcon && folderType != FolderType.Regex && folderType != FolderType.Regex_Group_Other)
                     {
                         folderNode.ImageIndex = childNode.ImageIndex;
                         folderNode.SelectedImageIndex = childNode.ImageIndex;
@@ -595,8 +607,16 @@ namespace SsmsSchemaFolders
                     if (Options.AppendDot)
                         schemaNode.Text += ".";
 
-                    schemaNode.ImageIndex = node.ImageIndex;
-                    schemaNode.SelectedImageIndex = node.ImageIndex;
+                    if (Options.UseObjectIcon)
+                    {
+                        schemaNode.ImageIndex = childNode.ImageIndex;
+                        schemaNode.SelectedImageIndex = childNode.ImageIndex;
+                    }
+                    else
+                    {
+                        schemaNode.ImageIndex = node.ImageIndex;
+                        schemaNode.SelectedImageIndex = node.ImageIndex;
+                    }
                 }
             }
 
