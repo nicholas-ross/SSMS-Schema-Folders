@@ -302,7 +302,11 @@ namespace SsmsSchemaFolders
             if (nodesReorganized > 0)
             {
                 // Re-sort nodes
-                node.TreeView.TreeViewNodeSorter = new SchemaFolderNodeSorter();
+                var sortedChildren = node.Nodes.Cast<TreeNode>()
+                                         .OrderBy(n => n, new SchemaFolderNodeSorter())
+                                         .ToArray();
+                node.Nodes.Clear();
+                node.Nodes.AddRange(sortedChildren);
             }
             return nodesReorganized;
         }
@@ -341,7 +345,7 @@ namespace SsmsSchemaFolders
             //can't move nodes while iterating forward over them
             //create list of nodes to move then perform the update
 
-            var folders = new SortedDictionary<string, List<TreeNode>>();
+            var folders = new Dictionary<string, List<TreeNode>>();
             int folderNodeIndex = -1;
             var newFolderNodes = new List<TreeNode>();
 
@@ -591,16 +595,8 @@ namespace SsmsSchemaFolders
                     if (Options.AppendDot)
                         schemaNode.Text += ".";
 
-                    if (Options.UseObjectIcon)
-                    {
-                        schemaNode.ImageIndex = childNode.ImageIndex;
-                        schemaNode.SelectedImageIndex = childNode.ImageIndex;
-                    }
-                    else
-                    {
-                        schemaNode.ImageIndex = node.ImageIndex;
-                        schemaNode.SelectedImageIndex = node.ImageIndex;
-                    }
+                    schemaNode.ImageIndex = node.ImageIndex;
+                    schemaNode.SelectedImageIndex = node.ImageIndex;
                 }
             }
 
@@ -664,29 +660,26 @@ namespace SsmsSchemaFolders
 
     }
 
-    public class SchemaFolderNodeSorter : System.Collections.IComparer
+    public class SchemaFolderNodeSorter : System.Collections.IComparer, IComparer<TreeNode>
     {
         public int Compare(object x, object y)
         {
-            TreeNode tx = x as TreeNode;
-            TreeNode ty = y as TreeNode;
+            return Compare(x as TreeNode, y as TreeNode);
+        }
 
-            if (string.Equals(tx.Text, "Other", StringComparison.CurrentCultureIgnoreCase))
-            {
-                if (!string.Equals(ty.Text, "Other", StringComparison.CurrentCultureIgnoreCase))
-                {
-                    return 1;
-                }
-            }
-            else
-            {
-                if (string.Equals(ty.Text, "Other", StringComparison.CurrentCultureIgnoreCase))
-                {
-                    return -1;
-                }
-            }
-            
-            return string.Compare(tx.Text, ty.Text, true);
+        public int Compare(TreeNode x, TreeNode y)
+        {
+            if (x == null) return (y == null) ? 0 : -1;
+            if (y == null) return 1;
+
+            bool xIsOther = string.Equals(x.Text.TrimEnd('.'), "Other", StringComparison.OrdinalIgnoreCase);
+            bool yIsOther = string.Equals(y.Text.TrimEnd('.'), "Other", StringComparison.OrdinalIgnoreCase);
+
+            if (xIsOther && yIsOther) return 0;
+            if (xIsOther) return 1;
+            if (yIsOther) return -1;
+
+            return string.Compare(x.Text, y.Text, StringComparison.OrdinalIgnoreCase);
         }
     }
 }
