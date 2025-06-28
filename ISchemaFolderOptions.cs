@@ -1,5 +1,4 @@
-﻿
-namespace SsmsSchemaFolders
+﻿namespace SsmsSchemaFolders
 {
     public interface ISchemaFolderOptions
     {
@@ -12,7 +11,9 @@ namespace SsmsSchemaFolders
         int UseClear { get; }
         FolderType Level1FolderType { get; }
         int Level1MinNodeCount { get; }
+        string Level1Regex { get; }
         FolderType Level2FolderType { get; }
         int Level2MinNodeCount { get; }
+        string Level2Regex { get; }
     }
 }

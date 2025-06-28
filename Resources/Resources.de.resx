@@ -150,11 +150,17 @@
   <data name="PropertyDescriptionSchemaFolderOptionsLevel1MinNodeCount" xml:space="preserve">
     <value>Sortieren Sie Knoten nur dann in Ordner, wenn sie mindestens so viele Knoten enthalten.</value>
   </data>
+  <data name="PropertyDescriptionSchemaFolderOptionsLevel1Regex" xml:space="preserve">
+    <value>Das für die Gruppierung zu verwendende Regex-Muster. Wird nur verwendet, wenn Ordnertyp Regex ist.</value>
+  </data>
   <data name="PropertyDescriptionSchemaFolderOptionsLevel2FolderType" xml:space="preserve">
     <value>Die Art der Sortierung, die zum Erstellen der Ordner verwendet werden soll.</value>
   </data>
   <data name="PropertyDescriptionSchemaFolderOptionsLevel2MinNodeCount" xml:space="preserve">
     <value>Sortieren Sie Knoten nur dann in Ordner, wenn sie mindestens so viele Knoten enthalten.</value>
+  </data>
+  <data name="PropertyDescriptionSchemaFolderOptionsLevel2Regex" xml:space="preserve">
+    <value>Das für die Gruppierung zu verwendende Regex-Muster. Wird nur verwendet, wenn Ordnertyp Regex ist.</value>
   </data>
   <data name="PropertyDescriptionSchemaFolderOptionsQuickSchema" xml:space="preserve">
     <value>Mindestknotenzahl erforderlich, bevor eine schnellere, aber ungenaue Methode zum Abrufen des Schemas verwendet werden kann. Null = deaktiviert.</value>
@@ -186,11 +192,17 @@
   <data name="PropertyDisplayNameSchemaFolderOptionsLevel1MinNodeCount" xml:space="preserve">
     <value>Mindestknotenanzahl</value>
   </data>
+  <data name="PropertyDisplayNameSchemaFolderOptionsLevel1Regex" xml:space="preserve">
+    <value>Regex-Muster</value>
+  </data>
   <data name="PropertyDisplayNameSchemaFolderOptionsLevel2FolderType" xml:space="preserve">
     <value>Ordnertyp</value>
   </data>
   <data name="PropertyDisplayNameSchemaFolderOptionsLevel2MinNodeCount" xml:space="preserve">
     <value>Mindestknotenanzahl</value>
+  </data>
+  <data name="PropertyDisplayNameSchemaFolderOptionsLevel2Regex" xml:space="preserve">
+    <value>Regex-Muster</value>
   </data>
   <data name="PropertyDisplayNameSchemaFolderOptionsQuickSchema" xml:space="preserve">
     <value>Schnelles Schema aus Knotentext</value>

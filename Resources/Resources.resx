@@ -153,11 +153,17 @@
   <data name="PropertyDescriptionSchemaFolderOptionsLevel1MinNodeCount" xml:space="preserve">
     <value>Sort nodes into folders only when it contains at least this many nodes.</value>
   </data>
+  <data name="PropertyDescriptionSchemaFolderOptionsLevel1Regex" xml:space="preserve">
+    <value>The regex pattern to use for grouping. Only used if Folder Type is Regex.</value>
+  </data>
   <data name="PropertyDescriptionSchemaFolderOptionsLevel2FolderType" xml:space="preserve">
     <value>The type of sorting to use to create the folders.</value>
   </data>
   <data name="PropertyDescriptionSchemaFolderOptionsLevel2MinNodeCount" xml:space="preserve">
     <value>Sort nodes into folders only when it contains at least this many nodes.</value>
+  </data>
+  <data name="PropertyDescriptionSchemaFolderOptionsLevel2Regex" xml:space="preserve">
+    <value>The regex pattern to use for grouping. Only used if Folder Type is Regex.</value>
   </data>
   <data name="PropertyDescriptionSchemaFolderOptionsQuickSchema" xml:space="preserve">
     <value>Min node count required before using faster but inaccurate method to get schema. Zero = disabled.</value>
@@ -192,11 +198,17 @@
   <data name="PropertyDisplayNameSchemaFolderOptionsLevel1MinNodeCount" xml:space="preserve">
     <value>Minimum Node Count</value>
   </data>
+  <data name="PropertyDisplayNameSchemaFolderOptionsLevel1Regex" xml:space="preserve">
+    <value>Regex Pattern</value>
+  </data>
   <data name="PropertyDisplayNameSchemaFolderOptionsLevel2FolderType" xml:space="preserve">
     <value>Folder Type</value>
   </data>
   <data name="PropertyDisplayNameSchemaFolderOptionsLevel2MinNodeCount" xml:space="preserve">
     <value>Minimum Node Count</value>
+  </data>
+  <data name="PropertyDisplayNameSchemaFolderOptionsLevel2Regex" xml:space="preserve">
+    <value>Regex Pattern</value>
   </data>
   <data name="PropertyDisplayNameSchemaFolderOptionsQuickSchema" xml:space="preserve">
     <value>Quick schema from node text</value>

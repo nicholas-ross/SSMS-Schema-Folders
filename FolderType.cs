@@ -4,7 +4,8 @@
     {
         None,
         Schema,
-        Alphabetical
+        Alphabetical,
+        Regex
         //Custom
     }
 }

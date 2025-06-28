@@ -75,6 +75,12 @@
         [DefaultValue(0)]
         public int Level1MinNodeCount { get; set; } = 0;
 
+        [CategoryResources(nameof(SchemaFolderOptions) + "FolderLevel1")]
+        [DisplayNameResources(nameof(SchemaFolderOptions) + nameof(Level1Regex))]
+        [DescriptionResources(nameof(SchemaFolderOptions) + nameof(Level1Regex))]
+        [DefaultValue("")]
+        public string Level1Regex { get; set; } = "";
+
         [CategoryResources(nameof(SchemaFolderOptions) + "FolderLevel2")]
         [DisplayNameResources(nameof(SchemaFolderOptions) + nameof(Level2FolderType))]
         [DescriptionResources(nameof(SchemaFolderOptions) + nameof(Level2FolderType))]
@@ -87,5 +93,10 @@
         [DefaultValue(0)]
         public int Level2MinNodeCount { get; set; } = 0;
 
+        [CategoryResources(nameof(SchemaFolderOptions) + "FolderLevel2")]
+        [DisplayNameResources(nameof(SchemaFolderOptions) + nameof(Level2Regex))]
+        [DescriptionResources(nameof(SchemaFolderOptions) + nameof(Level2Regex))]
+        [DefaultValue("")]
+        public string Level2Regex { get; set; } = "";
     }
 }

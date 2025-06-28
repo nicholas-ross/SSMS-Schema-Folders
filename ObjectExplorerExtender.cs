@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-//using System.Text.RegularExpressions;
+using System.Text.RegularExpressions;
 using System.Reflection;
 using System.Windows.Forms;
 
@@ -77,7 +77,18 @@ namespace SsmsSchemaFolders
                         return name.Substring(0, 1).ToUpper();
                     }
                     break;
-
+                case FolderType.Regex:
+                    string regex = (folderLevel == 1) ? Options.Level1Regex : Options.Level2Regex;
+                    if (!string.IsNullOrEmpty(regex))
+                    {
+                        var nameRegex = new Regex(regex);
+                        var match = nameRegex.Match(GetNodeName(node));
+                        if (match.Success && match.Groups.Count > 1)
+                        {
+                            return match.Groups[1].Value;
+                        }
+                    }
+                    break;
             }
             return null;
         }
