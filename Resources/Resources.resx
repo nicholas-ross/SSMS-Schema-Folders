@@ -226,7 +226,7 @@
     <value>Quick schema from node text</value>
   </data>
   <data name="PropertyDisplayNameSchemaFolderOptionsRenameNode" xml:space="preserve">
-    <value>Rename Node</value>
+    <value>Remove Schema Name From Node</value>
   </data>
   <data name="PropertyDisplayNameSchemaFolderOptionsUnresponsiveTimeout" xml:space="preserve">
     <value>Unresponsive timeout</value>
