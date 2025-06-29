@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Linq;
+using System.Drawing;
 
 namespace SsmsSchemaFolders
 {
@@ -19,6 +20,9 @@ namespace SsmsSchemaFolders
         private IServiceProvider Package { get; }
         //private Regex NodeSchemaRegex;
 
+        // Index of the custom green-folder image inside the Object Explorer TreeView image list.
+        // -1 until we inject it.
+        private int _greenFolderImageIndex = -1;
 
         /// <summary>
         /// 
@@ -30,6 +34,59 @@ namespace SsmsSchemaFolders
             //NodeSchemaRegex = new Regex(@"@Schema='((''|[^'])+)'");
         }
 
+
+        /// Ensures the custom green folder icon is present in the supplied TreeView image list and remembers the index. Safe to call multiple times.
+        private void EnsureGreenFolderIcon(TreeView treeView)
+        {
+            if (treeView == null)
+                return;
+
+            if (_greenFolderImageIndex >= 0)
+                return; // already done
+
+            if (treeView.ImageList == null)
+                return; // Should not happen – OE TreeView always has one.
+
+            try
+            {
+                var asm = typeof(ObjectExplorerExtender).Assembly;
+                // Find the resource regardless of namespace/case.
+                var resName = asm.GetManifestResourceNames()
+                                 .FirstOrDefault(n => n.EndsWith("greenFolder.png", StringComparison.OrdinalIgnoreCase));
+
+                if (resName != null)
+                {
+                    using (var stream = asm.GetManifestResourceStream(resName))
+                    {
+                        if (stream != null)
+                        {
+                            using (var img = Image.FromStream(stream))
+                            {
+                                _greenFolderImageIndex = treeView.ImageList.Images.Count;
+                                treeView.ImageList.Images.Add(img);
+                            }
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                // Silently ignore icon load issues – fallback will be default folder.
+                _greenFolderImageIndex = -1;
+            }
+        }
+
+
+        /// Applies a green folder icon (if loaded) to the supplied node.
+        private void ApplyGreenFolderIcon(TreeNode folderNode, TreeView treeView)
+        {
+            EnsureGreenFolderIcon(treeView);
+            if (_greenFolderImageIndex >= 0)
+            {
+                folderNode.ImageIndex = _greenFolderImageIndex;
+                folderNode.SelectedImageIndex = _greenFolderImageIndex;
+            }
+        }
 
         public string GetFolderName(TreeNode node, int folderLevel, bool quickSchemaName, bool expanding)
         {
@@ -444,6 +501,7 @@ namespace SsmsSchemaFolders
                     if (Options.AppendDot)
                         folderNode.Text += ".";
 
+                    // Assign icon – by default mimic SSMS folder, but override with green folder.
                     if (Options.UseObjectIcon && folderType != FolderType.Regex)
                     {
                         folderNode.ImageIndex = childNode.ImageIndex;
@@ -454,6 +512,9 @@ namespace SsmsSchemaFolders
                         folderNode.ImageIndex = node.ImageIndex;
                         folderNode.SelectedImageIndex = node.ImageIndex;
                     }
+
+                    // Finally overwrite with the custom green icon
+                    ApplyGreenFolderIcon(folderNode, node.TreeView);
                 }
 
                 //add node to folder list
@@ -637,6 +698,7 @@ namespace SsmsSchemaFolders
                     if (Options.AppendDot)
                         schemaNode.Text += ".";
 
+                    // Assign icon – by default mimic SSMS folder, but override with green folder.
                     if (Options.UseObjectIcon)
                     {
                         schemaNode.ImageIndex = childNode.ImageIndex;
@@ -647,6 +709,9 @@ namespace SsmsSchemaFolders
                         schemaNode.ImageIndex = node.ImageIndex;
                         schemaNode.SelectedImageIndex = node.ImageIndex;
                     }
+
+                    // Finally overwrite with the custom green icon
+                    ApplyGreenFolderIcon(schemaNode, node.TreeView);
                 }
             }
 
