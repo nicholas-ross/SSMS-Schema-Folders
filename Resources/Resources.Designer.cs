@@ -169,6 +169,15 @@ namespace SsmsSchemaFolders.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The regex pattern to use for grouping. Only used if Folder Type is Regex..
+        /// </summary>
+        internal static string PropertyDescriptionSchemaFolderOptionsLevel1Regex {
+            get {
+                return ResourceManager.GetString("PropertyDescriptionSchemaFolderOptionsLevel1Regex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The type of sorting to use to create the folders..
         /// </summary>
         internal static string PropertyDescriptionSchemaFolderOptionsLevel2FolderType {
@@ -183,6 +192,15 @@ namespace SsmsSchemaFolders.Resources {
         internal static string PropertyDescriptionSchemaFolderOptionsLevel2MinNodeCount {
             get {
                 return ResourceManager.GetString("PropertyDescriptionSchemaFolderOptionsLevel2MinNodeCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The regex pattern to use for grouping. Only used if Folder Type is Regex..
+        /// </summary>
+        internal static string PropertyDescriptionSchemaFolderOptionsLevel2Regex {
+            get {
+                return ResourceManager.GetString("PropertyDescriptionSchemaFolderOptionsLevel2Regex", resourceCulture);
             }
         }
         
@@ -286,6 +304,15 @@ namespace SsmsSchemaFolders.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Regex Pattern.
+        /// </summary>
+        internal static string PropertyDisplayNameSchemaFolderOptionsLevel1Regex {
+            get {
+                return ResourceManager.GetString("PropertyDisplayNameSchemaFolderOptionsLevel1Regex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Folder Type.
         /// </summary>
         internal static string PropertyDisplayNameSchemaFolderOptionsLevel2FolderType {
@@ -300,6 +327,15 @@ namespace SsmsSchemaFolders.Resources {
         internal static string PropertyDisplayNameSchemaFolderOptionsLevel2MinNodeCount {
             get {
                 return ResourceManager.GetString("PropertyDisplayNameSchemaFolderOptionsLevel2MinNodeCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Regex Pattern.
+        /// </summary>
+        internal static string PropertyDisplayNameSchemaFolderOptionsLevel2Regex {
+            get {
+                return ResourceManager.GetString("PropertyDisplayNameSchemaFolderOptionsLevel2Regex", resourceCulture);
             }
         }
         

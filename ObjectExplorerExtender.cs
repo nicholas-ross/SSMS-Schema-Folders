@@ -2,9 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-//using System.Text.RegularExpressions;
+using System.Text.RegularExpressions;
 using System.Reflection;
 using System.Windows.Forms;
+using System.Linq;
+using System.Drawing;
 
 namespace SsmsSchemaFolders
 {
@@ -18,6 +20,9 @@ namespace SsmsSchemaFolders
         private IServiceProvider Package { get; }
         //private Regex NodeSchemaRegex;
 
+        // Index of the custom green-folder image inside the Object Explorer TreeView image list.
+        // -1 until we inject it.
+        private int _greenFolderImageIndex = -1;
 
         /// <summary>
         /// 
@@ -30,7 +35,60 @@ namespace SsmsSchemaFolders
         }
 
 
-        public string GetFolderName(TreeNode node, int folderLevel, bool quickSchemaName)
+        /// Ensures the custom green folder icon is present in the supplied TreeView image list and remembers the index. Safe to call multiple times.
+        private void EnsureGreenFolderIcon(TreeView treeView)
+        {
+            if (treeView == null)
+                return;
+
+            if (_greenFolderImageIndex >= 0)
+                return; // already done
+
+            if (treeView.ImageList == null)
+                return; // Should not happen – OE TreeView always has one.
+
+            try
+            {
+                var asm = typeof(ObjectExplorerExtender).Assembly;
+                // Find the resource regardless of namespace/case.
+                var resName = asm.GetManifestResourceNames()
+                                 .FirstOrDefault(n => n.EndsWith("greenFolder.png", StringComparison.OrdinalIgnoreCase));
+
+                if (resName != null)
+                {
+                    using (var stream = asm.GetManifestResourceStream(resName))
+                    {
+                        if (stream != null)
+                        {
+                            using (var img = Image.FromStream(stream))
+                            {
+                                _greenFolderImageIndex = treeView.ImageList.Images.Count;
+                                treeView.ImageList.Images.Add(img);
+                            }
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                // Silently ignore icon load issues – fallback will be default folder.
+                _greenFolderImageIndex = -1;
+            }
+        }
+
+
+        /// Applies a green folder icon (if loaded) to the supplied node.
+        private void ApplyGreenFolderIcon(TreeNode folderNode, TreeView treeView)
+        {
+            EnsureGreenFolderIcon(treeView);
+            if (_greenFolderImageIndex >= 0)
+            {
+                folderNode.ImageIndex = _greenFolderImageIndex;
+                folderNode.SelectedImageIndex = _greenFolderImageIndex;
+            }
+        }
+
+        public string GetFolderName(TreeNode node, int folderLevel, bool quickSchemaName, bool expanding)
         {
             FolderType folderType = FolderType.None;
             switch (folderLevel)
@@ -77,7 +135,64 @@ namespace SsmsSchemaFolders
                         return name.Substring(0, 1).ToUpper();
                     }
                     break;
+                case FolderType.Regex:
+                    string regex = (folderLevel == 1) ? Options.Level1Regex : Options.Level2Regex;
+                    //DebugLogger.Log("GetFolderName: Node: '{0}', Regex: '{1}'", node.Text, regex);
+                    if (!string.IsNullOrEmpty(regex))
+                    {
+                        var nodeName = GetNodeName(node);
+                        if (string.IsNullOrEmpty(nodeName))
+                        {
+                            var text = node.Text;
+                            var dotIndex = text.IndexOf('.');
+                            if (dotIndex >= 0)
+                            {
+                                nodeName = text.Substring(dotIndex + 1);
+                            }
+                            else
+                            {
+                                nodeName = text;
+                            }
+                        }
+                        //DebugLogger.Log("GetFolderName: Derived NodeName: '{0}'", nodeName);
 
+                        if (!string.IsNullOrEmpty(nodeName))
+                        {
+                            var nameRegex = new Regex(regex, RegexOptions.IgnoreCase);
+                            var match = nameRegex.Match(nodeName);
+                            if (match.Success && match.Groups.Count > 1)
+                            {
+                                string folder = null;
+                                // Some patterns (alternations etc.) may define multiple capture groups.
+                                // Use the first group that actually captured content.
+                                for (int gi = 1; gi < match.Groups.Count; gi++)
+                                {
+                                    var grp = match.Groups[gi];
+                                    if (grp.Success && grp.Length > 0)
+                                    {
+                                        folder = grp.Value;
+                                        break;
+                                    }
+                                }
+                                if (!string.IsNullOrEmpty(folder))
+                                {
+                                    // DebugLogger.Log("GetFolderName: Match success, returning folder: '{0}'", folder);
+                                    return folder;
+                                }
+                            }
+                            
+                            bool groupAsOther = (folderLevel == 1) ? Options.Level1GroupNonMatchingAsOther : Options.Level2GroupNonMatchingAsOther;
+                            if (expanding && groupAsOther)
+                            {
+                                //DebugLogger.Log("GetFolderName: No match, returning 'Other'");
+                                return "Other";
+                            }
+                            //DebugLogger.Log("GetFolderName: No match, returning null");
+                            return null;
+                        }
+                    }
+                    //DebugLogger.Log("GetFolderName: No regex or nodename, returning null");
+                    break;
             }
             return null;
         }
@@ -250,11 +365,29 @@ namespace SsmsSchemaFolders
                 // 1 is the lazy expanding placeholder node.
                 return 0;
 
-            if (Options.UseClear > 0 && node.Nodes.Count >= Options.UseClear)
-                //BUG: Doesn't support folder levels. Need to rewrite.
-                return ReorganizeNodesWithClear(node, nodeTag, expanding);
+            if (!string.IsNullOrWhiteSpace(nodeTag) && node.Tag != null && node.Tag.ToString().Contains(nodeTag))
+                // Already done this node.
+                return 0;
 
-            return ReorganizeNodes(node, nodeTag, expanding, 1);
+            int nodesReorganized = ReorganizeNodes(node, nodeTag, expanding, 1);
+            if (nodesReorganized > 0)
+            {
+                // Re-sort nodes
+                var sortedChildren = node.Nodes.Cast<TreeNode>()
+                                         .OrderBy(n => n, new SchemaFolderNodeSorter())
+                                         .ToArray();
+                node.Nodes.Clear();
+                node.Nodes.AddRange(sortedChildren);
+
+                // Log the final ordering of the top-level items after reorganisation. This will help trace any issues where nodes appear out of order in Object Explorer.
+                
+                // DebugLogger.Log("Top-level items for '{0}' (count: {1})", node.Text, sortedChildren.Length);
+                // foreach (var child in sortedChildren)
+                // {
+                //     DebugLogger.Log("    {0}", child.Text);
+                // }
+            }
+            return nodesReorganized;
         }
 
         //Stopwatch sw = new Stopwatch();
@@ -269,12 +402,22 @@ namespace SsmsSchemaFolders
         /// <returns>The count of schema nodes.</returns>
         private int ReorganizeNodes(TreeNode node, string nodeTag, bool expanding, int folderLevel)
         {
-            debug_message("ReorganizeNodes:Level{0}", folderLevel);
+            //DebugLogger.Log("ReorganizeNodes: Starting for node '{0}', child count: {1}, folder level: {2}", node.Text, node.Nodes.Count, folderLevel);
 
-            //BUG: folder node count should be ignored on after expanding event
-            // First 50 have already been sorted which will affect the count.
-            if (node.Nodes.Count < GetFolderLevelMinNodeCount(folderLevel))
+            if (!expanding && node.Nodes.Count < GetFolderLevelMinNodeCount(folderLevel))
                 return 0;
+            
+            FolderType folderType = FolderType.None;
+            switch (folderLevel)
+            {
+                case 1:
+                    folderType = Options.Level1FolderType;
+                    break;
+
+                case 2:
+                    folderType = Options.Level2FolderType;
+                    break;
+            }
             
             var nodeText = node.Text;
             node.Text += " (sorting...)";
@@ -293,14 +436,15 @@ namespace SsmsSchemaFolders
             //can't move nodes while iterating forward over them
             //create list of nodes to move then perform the update
 
-            var folders = new SortedDictionary<string, List<TreeNode>>();
+            var folders = new Dictionary<string, List<TreeNode>>();
             int folderNodeIndex = -1;
             var newFolderNodes = new List<TreeNode>();
 
             //debug_message("Sort Nodes:{0}", sw.ElapsedMilliseconds);
 
-            foreach (TreeNode childNode in node.Nodes)
+            foreach (TreeNode childNode in node.Nodes.Cast<TreeNode>().ToList())
             {
+                //DebugLogger.Log("ReorganizeNodes: Processing child node '{0}'", childNode.Text);
                 //debug_message("  {0}:{1}", childNode.Text, sw.ElapsedMilliseconds);
 
                 //skip schema node folders but make sure they are in the folders list
@@ -316,12 +460,24 @@ namespace SsmsSchemaFolders
 
                 //debug_message("GetFolderName:begin:{0}", sw.ElapsedMilliseconds);
 
-                string folderName = GetFolderName(childNode, folderLevel, quickAndDirty);
+                string folderName = GetFolderName(childNode, folderLevel, quickAndDirty, expanding);
+                //DebugLogger.Log("ReorganizeNodes: Child node '{0}' assigned to folder: '{1}'", childNode.Text, folderName ?? "null");
 
                 //debug_message("GetFolderName:end:{0}", sw.ElapsedMilliseconds);
 
                 if (string.IsNullOrEmpty(folderName))
+                {
+                    //DebugLogger.Log("ReorganizeNodes: Skipping child node '{0}' due to empty folder name.", childNode.Text);
+                    
+                    // Node did not match any folder pattern. If the user wants schema removed, rename it here.
+                    if (Options.RenameNode)
+                    {
+                        RenameNode(childNode, quickAndDirty);
+                    }
+
+                    // Nothing else to do with this node.
                     continue;
+                }
 
                 //create schema node
                 if (!node.Nodes.ContainsKey(folderName))
@@ -345,7 +501,8 @@ namespace SsmsSchemaFolders
                     if (Options.AppendDot)
                         folderNode.Text += ".";
 
-                    if (Options.UseObjectIcon)
+                    // Assign icon – by default mimic SSMS folder, but override with green folder.
+                    if (Options.UseObjectIcon && folderType != FolderType.Regex)
                     {
                         folderNode.ImageIndex = childNode.ImageIndex;
                         folderNode.SelectedImageIndex = childNode.ImageIndex;
@@ -355,6 +512,9 @@ namespace SsmsSchemaFolders
                         folderNode.ImageIndex = node.ImageIndex;
                         folderNode.SelectedImageIndex = node.ImageIndex;
                     }
+
+                    // Finally overwrite with the custom green icon
+                    ApplyGreenFolderIcon(folderNode, node.TreeView);
                 }
 
                 //add node to folder list
@@ -380,6 +540,7 @@ namespace SsmsSchemaFolders
 
             //debug_message("Move Nodes:{0}", sw.ElapsedMilliseconds);
             debug_message("Move Nodes");
+            //DebugLogger.Log("ReorganizeNodes: Moving nodes to folders. Folder count: {0}", folders.Count);
 
             if (folderNodeIndex >= 0)
             {
@@ -437,6 +598,7 @@ namespace SsmsSchemaFolders
             node.TreeView.EndUpdate();
             node.Text = nodeText;
             unresponsive.Stop();
+            //DebugLogger.Log("ReorganizeNodes: Finished for node '{0}'", node.Text);
 
             //debug_message("Done:{0}", sw.ElapsedMilliseconds);
             //sw.Stop();
@@ -446,9 +608,24 @@ namespace SsmsSchemaFolders
             {
                 foreach (string nodeName in folders.Keys)
                 {
+                    if (nodeName == "Other")
+                    {
+                        continue;
+                    }
                     //debug_message("Next ReorganizeNodes: {1} > {0}", nodeName, folderLevel);
                     ReorganizeNodes(node.Nodes[nodeName], nodeTag, expanding, folderLevel + 1);
                 }
+            }
+
+            // Finally sort current level (both folders and items) alphabetically when we are *not* grouping non-matches as "Other".
+            bool groupOtherCurrent = (folderLevel == 1) ? Options.Level1GroupNonMatchingAsOther : Options.Level2GroupNonMatchingAsOther;
+            if (!groupOtherCurrent)
+            {
+                var sorted = node.Nodes.Cast<TreeNode>()
+                                         .OrderBy(n => n, new SchemaFolderNodeSorter())
+                                         .ToArray();
+                node.Nodes.Clear();
+                node.Nodes.AddRange(sorted);
             }
 
             return folders.Count;
@@ -532,6 +709,7 @@ namespace SsmsSchemaFolders
                     if (Options.AppendDot)
                         schemaNode.Text += ".";
 
+                    // Assign icon – by default mimic SSMS folder, but override with green folder.
                     if (Options.UseObjectIcon)
                     {
                         schemaNode.ImageIndex = childNode.ImageIndex;
@@ -542,6 +720,9 @@ namespace SsmsSchemaFolders
                         schemaNode.ImageIndex = node.ImageIndex;
                         schemaNode.SelectedImageIndex = node.ImageIndex;
                     }
+
+                    // Finally overwrite with the custom green icon
+                    ApplyGreenFolderIcon(schemaNode, node.TreeView);
                 }
             }
 
@@ -598,12 +779,53 @@ namespace SsmsSchemaFolders
         [System.Diagnostics.Conditional("DEBUG")]
         private void debug_message(string message, params object[] args)
         {
-            if (Package is IDebugOutput)
-            {
-                ((IDebugOutput)Package).debug_message(message, args);
-            }
+            //Trace.WriteLine(string.Format(message, args));
+            var output = (IDebugOutput)Package.GetService(typeof(IDebugOutput));
+            output.debug_message(string.Format(message, args));
         }
 
     }
 
+    public class SchemaFolderNodeSorter : System.Collections.IComparer, IComparer<TreeNode>
+    {
+        public int Compare(object x, object y)
+        {
+            return Compare(x as TreeNode, y as TreeNode);
+        }
+
+        public int Compare(TreeNode x, TreeNode y)
+        {
+            if (x == null) return (y == null) ? 0 : -1;
+            if (y == null) return 1;
+
+            // Treat the special "Other" folder as last regardless of punctuation.
+            bool xIsOther = string.Equals(x.Text.TrimEnd('.'), "Other", StringComparison.OrdinalIgnoreCase);
+            bool yIsOther = string.Equals(y.Text.TrimEnd('.'), "Other", StringComparison.OrdinalIgnoreCase);
+
+            if (xIsOther && yIsOther) return 0;
+            if (xIsOther) return 1;
+            if (yIsOther) return -1;
+
+            // Build sort keys so that:
+            // 1. Trailing dots used on folder nodes are ignored.
+            // 2. Schema prefixes like "dbo." are ignored, allowing tables and folders to mingle alphabetically by their logical name.
+            string GetSortKey(TreeNode n)
+            {
+                if (n == null) return string.Empty;
+
+                var text = n.Text?.TrimEnd('.') ?? string.Empty;
+
+                // If there is a dot elsewhere (e.g. "dbo.TableName"), drop the prefix.
+                int firstDot = text.IndexOf('.');
+                if (firstDot >= 0 && firstDot < text.Length - 1)
+                {
+                    text = text.Substring(firstDot + 1);
+                }
+
+                return text;
+            }
+
+            return string.Compare(GetSortKey(x), GetSortKey(y), StringComparison.OrdinalIgnoreCase);
+        }
+    }
 }
