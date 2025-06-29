@@ -617,6 +617,17 @@ namespace SsmsSchemaFolders
                 }
             }
 
+            // Finally sort current level (both folders and items) alphabetically when we are *not* grouping non-matches as "Other".
+            bool groupOtherCurrent = (folderLevel == 1) ? Options.Level1GroupNonMatchingAsOther : Options.Level2GroupNonMatchingAsOther;
+            if (!groupOtherCurrent)
+            {
+                var sorted = node.Nodes.Cast<TreeNode>()
+                                         .OrderBy(n => n, new SchemaFolderNodeSorter())
+                                         .ToArray();
+                node.Nodes.Clear();
+                node.Nodes.AddRange(sorted);
+            }
+
             return folders.Count;
         }
 
