@@ -1,6 +1,8 @@
 using System;
 using System.IO;
 
+// Log file will be saved to a location like C:\Users\Administrator\AppData\Local\Temp\3
+
 namespace SsmsSchemaFolders
 {
     public static class DebugLogger

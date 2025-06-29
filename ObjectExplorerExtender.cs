@@ -80,7 +80,7 @@ namespace SsmsSchemaFolders
                     break;
                 case FolderType.Regex:
                     string regex = (folderLevel == 1) ? Options.Level1Regex : Options.Level2Regex;
-                    DebugLogger.Log("GetFolderName: Node: '{0}', Regex: '{1}'", node.Text, regex);
+                    //DebugLogger.Log("GetFolderName: Node: '{0}', Regex: '{1}'", node.Text, regex);
                     if (!string.IsNullOrEmpty(regex))
                     {
                         var nodeName = GetNodeName(node);
@@ -97,7 +97,7 @@ namespace SsmsSchemaFolders
                                 nodeName = text;
                             }
                         }
-                        DebugLogger.Log("GetFolderName: Derived NodeName: '{0}'", nodeName);
+                        //DebugLogger.Log("GetFolderName: Derived NodeName: '{0}'", nodeName);
 
                         if (!string.IsNullOrEmpty(nodeName))
                         {
@@ -106,21 +106,21 @@ namespace SsmsSchemaFolders
                             if (match.Success && match.Groups.Count > 1)
                             {
                                 var folder = match.Groups[1].Value;
-                                DebugLogger.Log("GetFolderName: Match success, returning folder: '{0}'", folder);
+                               // DebugLogger.Log("GetFolderName: Match success, returning folder: '{0}'", folder);
                                 return folder;
                             }
                             
                             bool groupAsOther = (folderLevel == 1) ? Options.Level1GroupNonMatchingAsOther : Options.Level2GroupNonMatchingAsOther;
                             if (expanding && groupAsOther)
                             {
-                                DebugLogger.Log("GetFolderName: No match, returning 'Other'");
+                                //DebugLogger.Log("GetFolderName: No match, returning 'Other'");
                                 return "Other";
                             }
-                            DebugLogger.Log("GetFolderName: No match, returning null");
+                            //DebugLogger.Log("GetFolderName: No match, returning null");
                             return null;
                         }
                     }
-                    DebugLogger.Log("GetFolderName: No regex or nodename, returning null");
+                    //DebugLogger.Log("GetFolderName: No regex or nodename, returning null");
                     break;
             }
             return null;
@@ -307,6 +307,14 @@ namespace SsmsSchemaFolders
                                          .ToArray();
                 node.Nodes.Clear();
                 node.Nodes.AddRange(sortedChildren);
+
+                // Log the final ordering of the top-level items after reorganisation. This will help trace any issues where nodes appear out of order in Object Explorer.
+                
+                // DebugLogger.Log("Top-level items for '{0}' (count: {1})", node.Text, sortedChildren.Length);
+                // foreach (var child in sortedChildren)
+                // {
+                //     DebugLogger.Log("    {0}", child.Text);
+                // }
             }
             return nodesReorganized;
         }
@@ -323,7 +331,7 @@ namespace SsmsSchemaFolders
         /// <returns>The count of schema nodes.</returns>
         private int ReorganizeNodes(TreeNode node, string nodeTag, bool expanding, int folderLevel)
         {
-            DebugLogger.Log("ReorganizeNodes: Starting for node '{0}', child count: {1}, folder level: {2}", node.Text, node.Nodes.Count, folderLevel);
+            //DebugLogger.Log("ReorganizeNodes: Starting for node '{0}', child count: {1}, folder level: {2}", node.Text, node.Nodes.Count, folderLevel);
 
             if (!expanding && node.Nodes.Count < GetFolderLevelMinNodeCount(folderLevel))
                 return 0;
@@ -365,7 +373,7 @@ namespace SsmsSchemaFolders
 
             foreach (TreeNode childNode in node.Nodes.Cast<TreeNode>().ToList())
             {
-                DebugLogger.Log("ReorganizeNodes: Processing child node '{0}'", childNode.Text);
+                //DebugLogger.Log("ReorganizeNodes: Processing child node '{0}'", childNode.Text);
                 //debug_message("  {0}:{1}", childNode.Text, sw.ElapsedMilliseconds);
 
                 //skip schema node folders but make sure they are in the folders list
@@ -382,13 +390,13 @@ namespace SsmsSchemaFolders
                 //debug_message("GetFolderName:begin:{0}", sw.ElapsedMilliseconds);
 
                 string folderName = GetFolderName(childNode, folderLevel, quickAndDirty, expanding);
-                DebugLogger.Log("ReorganizeNodes: Child node '{0}' assigned to folder: '{1}'", childNode.Text, folderName ?? "null");
+                //DebugLogger.Log("ReorganizeNodes: Child node '{0}' assigned to folder: '{1}'", childNode.Text, folderName ?? "null");
 
                 //debug_message("GetFolderName:end:{0}", sw.ElapsedMilliseconds);
 
                 if (string.IsNullOrEmpty(folderName))
                 {
-                    DebugLogger.Log("ReorganizeNodes: Skipping child node '{0}' due to empty folder name.", childNode.Text);
+                    //DebugLogger.Log("ReorganizeNodes: Skipping child node '{0}' due to empty folder name.", childNode.Text);
                     
                     // Node did not match any folder pattern. If the user wants schema removed, rename it here.
                     if (Options.RenameNode)
@@ -457,7 +465,7 @@ namespace SsmsSchemaFolders
 
             //debug_message("Move Nodes:{0}", sw.ElapsedMilliseconds);
             debug_message("Move Nodes");
-            DebugLogger.Log("ReorganizeNodes: Moving nodes to folders. Folder count: {0}", folders.Count);
+            //DebugLogger.Log("ReorganizeNodes: Moving nodes to folders. Folder count: {0}", folders.Count);
 
             if (folderNodeIndex >= 0)
             {
@@ -515,7 +523,7 @@ namespace SsmsSchemaFolders
             node.TreeView.EndUpdate();
             node.Text = nodeText;
             unresponsive.Stop();
-            DebugLogger.Log("ReorganizeNodes: Finished for node '{0}'", node.Text);
+            //DebugLogger.Log("ReorganizeNodes: Finished for node '{0}'", node.Text);
 
             //debug_message("Done:{0}", sw.ElapsedMilliseconds);
             //sw.Stop();
