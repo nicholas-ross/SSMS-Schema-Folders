@@ -105,9 +105,23 @@ namespace SsmsSchemaFolders
                             var match = nameRegex.Match(nodeName);
                             if (match.Success && match.Groups.Count > 1)
                             {
-                                var folder = match.Groups[1].Value;
-                               // DebugLogger.Log("GetFolderName: Match success, returning folder: '{0}'", folder);
-                                return folder;
+                                string folder = null;
+                                // Some patterns (alternations etc.) may define multiple capture groups.
+                                // Use the first group that actually captured content.
+                                for (int gi = 1; gi < match.Groups.Count; gi++)
+                                {
+                                    var grp = match.Groups[gi];
+                                    if (grp.Success && grp.Length > 0)
+                                    {
+                                        folder = grp.Value;
+                                        break;
+                                    }
+                                }
+                                if (!string.IsNullOrEmpty(folder))
+                                {
+                                    // DebugLogger.Log("GetFolderName: Match success, returning folder: '{0}'", folder);
+                                    return folder;
+                                }
                             }
                             
                             bool groupAsOther = (folderLevel == 1) ? Options.Level1GroupNonMatchingAsOther : Options.Level2GroupNonMatchingAsOther;

@@ -154,7 +154,7 @@
     <value>Sort nodes into folders only when it contains at least this many nodes.</value>
   </data>
   <data name="PropertyDescriptionSchemaFolderOptionsLevel1Regex" xml:space="preserve">
-    <value>The regex pattern to use for grouping. Only used if Folder Type is Regex.</value>
+    <value>The regex pattern to use for grouping. Only used if Folder Type is Regex. For example (?:^(?:tbl_|AAA_sp_|sp_)([^_]+)_[^_].*|^(?!tbl_|AAA_sp_|sp_)([^_]+)_[^_]+_.*)</value>
   </data>
   <data name="PropertyDescriptionSchemaFolderOptionsLevel1GroupNonMatchingAsOther" xml:space="preserve">
     <value>Group items that do not match the regex into a folder named 'Other'. Only used if Folder Type is Regex.</value>
@@ -166,7 +166,7 @@
     <value>Sort nodes into folders only when it contains at least this many nodes.</value>
   </data>
   <data name="PropertyDescriptionSchemaFolderOptionsLevel2Regex" xml:space="preserve">
-    <value>The regex pattern to use for grouping. Only used if Folder Type is Regex.</value>
+    <value>The regex pattern to use for grouping. Only used if Folder Type is Regex. For example (?:^(?:tbl_|AAA_sp_|sp_)([^_]+)_[^_].*|^(?!tbl_|AAA_sp_|sp_)([^_]+)_[^_]+_.*)</value>
   </data>
   <data name="PropertyDescriptionSchemaFolderOptionsLevel2GroupNonMatchingAsOther" xml:space="preserve">
     <value>Group items that do not match the regex into a folder named 'Other'. Only used if Folder Type is Regex.</value>
