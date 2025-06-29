@@ -145,14 +145,23 @@
 
             foreach (PropertyDescriptor p in props)
             {
-                // Hide regex-only fields when not applicable.
+                bool hide = false;
+
                 if ((p.Name == nameof(Level1Regex) || p.Name == nameof(Level1GroupNonMatchingAsOther)) && Level1FolderType != FolderType.Regex)
-                    continue;
+                    hide = true;
 
                 if ((p.Name == nameof(Level2Regex) || p.Name == nameof(Level2GroupNonMatchingAsOther)) && Level2FolderType != FolderType.Regex)
-                    continue;
+                    hide = true;
 
-                list.Add(p);
+                if (hide)
+                {
+                    // Keep the property for persistence but mark it non-browsable so it stays out of the grid.
+                    list.Add(TypeDescriptor.CreateProperty(p.ComponentType, p, BrowsableAttribute.No));
+                }
+                else
+                {
+                    list.Add(p);
+                }
             }
 
             return new PropertyDescriptorCollection(list.ToArray(), true);
