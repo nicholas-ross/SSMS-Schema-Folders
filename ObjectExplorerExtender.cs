@@ -389,6 +389,14 @@ namespace SsmsSchemaFolders
                 if (string.IsNullOrEmpty(folderName))
                 {
                     DebugLogger.Log("ReorganizeNodes: Skipping child node '{0}' due to empty folder name.", childNode.Text);
+                    
+                    // Node did not match any folder pattern. If the user wants schema removed, rename it here.
+                    if (Options.RenameNode)
+                    {
+                        RenameNode(childNode, quickAndDirty);
+                    }
+
+                    // Nothing else to do with this node.
                     continue;
                 }
 
@@ -692,6 +700,7 @@ namespace SsmsSchemaFolders
             if (x == null) return (y == null) ? 0 : -1;
             if (y == null) return 1;
 
+            // Treat the special "Other" folder as last regardless of punctuation.
             bool xIsOther = string.Equals(x.Text.TrimEnd('.'), "Other", StringComparison.OrdinalIgnoreCase);
             bool yIsOther = string.Equals(y.Text.TrimEnd('.'), "Other", StringComparison.OrdinalIgnoreCase);
 
@@ -699,7 +708,26 @@ namespace SsmsSchemaFolders
             if (xIsOther) return 1;
             if (yIsOther) return -1;
 
-            return string.Compare(x.Text, y.Text, StringComparison.OrdinalIgnoreCase);
+            // Build sort keys so that:
+            // 1. Trailing dots used on folder nodes are ignored.
+            // 2. Schema prefixes like "dbo." are ignored, allowing tables and folders to mingle alphabetically by their logical name.
+            string GetSortKey(TreeNode n)
+            {
+                if (n == null) return string.Empty;
+
+                var text = n.Text?.TrimEnd('.') ?? string.Empty;
+
+                // If there is a dot elsewhere (e.g. "dbo.TableName"), drop the prefix.
+                int firstDot = text.IndexOf('.');
+                if (firstDot >= 0 && firstDot < text.Length - 1)
+                {
+                    text = text.Substring(firstDot + 1);
+                }
+
+                return text;
+            }
+
+            return string.Compare(GetSortKey(x), GetSortKey(y), StringComparison.OrdinalIgnoreCase);
         }
     }
 }
