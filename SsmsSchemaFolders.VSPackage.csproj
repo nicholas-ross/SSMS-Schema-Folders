@@ -126,6 +126,11 @@
       <Name>SsmsSchemaFolders.Ssms21</Name>
       <Aliases>Ssms21</Aliases>
     </ProjectReference>
+    <ProjectReference Include="SsmsSchemaFolders.Ssms22.csproj">
+      <Project>{a1bbf14a-7e6a-42b8-8cba-5dd8f0301e79}</Project>
+      <Name>SsmsSchemaFolders.Ssms22</Name>
+      <Aliases>Ssms22</Aliases>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.SDK" Version="15.0.1" ExcludeAssets="runtime">

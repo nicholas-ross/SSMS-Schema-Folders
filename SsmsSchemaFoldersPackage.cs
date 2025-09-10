@@ -2,6 +2,7 @@
 extern alias Ssms19;
 extern alias Ssms20;
 extern alias Ssms21;
+extern alias Ssms22;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using System;
@@ -109,6 +110,10 @@ namespace SsmsSchemaFolders
 
                     switch (ssmsInterfacesVersion.FileMajorPart)
                     {
+                        case 22:
+                            debug_message("SsmsVersion:22");
+                            return new Ssms22::SsmsSchemaFolders.ObjectExplorerExtender(this, Options);
+
                         case 21:
                             debug_message("SsmsVersion:21");
                             return new Ssms21::SsmsSchemaFolders.ObjectExplorerExtender(this, Options);
@@ -132,8 +137,8 @@ namespace SsmsSchemaFolders
                     }
                 }
 
-                ActivityLogEntry(__ACTIVITYLOG_ENTRYTYPE.ALE_WARNING, "Unknown SSMS Version. Defaulting to 21.");
-                return new Ssms21::SsmsSchemaFolders.ObjectExplorerExtender(this, Options);
+                ActivityLogEntry(__ACTIVITYLOG_ENTRYTYPE.ALE_WARNING, "Unknown SSMS Version. Defaulting to 22.");
+                return new Ssms22::SsmsSchemaFolders.ObjectExplorerExtender(this, Options);
             }
             catch (Exception ex)
             {

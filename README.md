@@ -29,6 +29,7 @@ SSMS allows installing in a different location. The default paths are listed bel
 * 19 - `C:\Program Files (x86)\Microsoft SQL Server Management Studio 19\Common7\IDE\Extensions`
 * 20 - `C:\Program Files (x86)\Microsoft SQL Server Management Studio 20\Common7\IDE\Extensions`
 * 21 - `C:\Program Files\Microsoft SQL Server Management Studio 21\Release\Common7\IDE\Extensions`
+* 22 - `C:\Program Files\Microsoft SQL Server Management Studio 22\Preview\Common7\IDE\Extensions`
 
 ### SSMS 2012, 2014, 2016, 17
 
@@ -68,6 +69,9 @@ Please report any issues to <https://github.com/nicholas-ross/SSMS-Schema-Folder
 
 
 ## Change Log
+
+### vNext (TBA)
+* Added support for v22.
 
 ### v1.7 (2025-06-21)
 * Added support for v21.
