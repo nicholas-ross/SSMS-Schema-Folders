@@ -321,7 +321,6 @@ namespace SsmsSchemaFolders
             debug_message("\nObjectExplorerTreeViewBeforeExpandCallback:{0}:{1}", e.Node.Text, Form.ModifierKeys);
             try
             {
-
                 if (Options.EnabledModifierKeys != Keys.None)
                 {
                     var modifierKeys = Options.EnabledModifierKeys & Keys.Modifiers;
