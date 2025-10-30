@@ -72,6 +72,7 @@ Please report any issues to <https://github.com/nicholas-ross/SSMS-Schema-Folder
 
 ### vNext (TBA)
 * Added support for v22.
+* Fixed: Sort additional table folders.
 
 ### v1.7 (2025-06-21)
 * Added support for v21.

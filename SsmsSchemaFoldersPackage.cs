@@ -178,14 +178,17 @@ namespace SsmsSchemaFolders
                         switch (urnPath)
                         {
                             case "Server/Database/UserTablesFolder":
+                            case "Server/Database/SystemTablesFolder":
+                            case "Server/Database/FileTablesFolder":
+                            case "Server/Database/ExternalTablesFolder":
+                            case "Server/Database/GraphTablesFolder":
                             case "Server/Database/ViewsFolder":
+                            case "Server/Database/SystemViewsFolder":
                             case "Server/Database/SynonymsFolder":
                             case "Server/Database/StoredProceduresFolder":
+                            case "Server/Database/SystemStoredProceduresFolder":
                             case "Server/Database/Table-valuedFunctionsFolder":
                             case "Server/Database/Scalar-valuedFunctionsFolder":
-                            case "Server/Database/SystemTablesFolder":
-                            case "Server/Database/SystemViewsFolder":
-                            case "Server/Database/SystemStoredProceduresFolder":
                                 //node.TreeView.Cursor = Cursors.WaitCursor;
                                 var schemaFolderCount = _objectExplorerExtender.ReorganizeNodes(node, SchemaFolderNodeTag, expanding);
                                 if (expanding && schemaFolderCount == 1)
@@ -321,6 +324,7 @@ namespace SsmsSchemaFolders
             debug_message("\nObjectExplorerTreeViewBeforeExpandCallback:{0}:{1}", e.Node.Text, Form.ModifierKeys);
             try
             {
+                debug_message(_objectExplorerExtender.GetNodeUrnPath(e.Node));
 
                 if (Options.EnabledModifierKeys != Keys.None)
                 {
