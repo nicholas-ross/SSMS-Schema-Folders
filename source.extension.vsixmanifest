@@ -1,17 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
-  <Metadata>
-    <Identity Id="SsmsSchemaFolders.Nicholas Ross.768d4c73-0842-456d-9b52-2329af3c18f0" Version="1.0" Language="en-US" Publisher="Nicholas Ross" />
-    <DisplayName>SsmsSchemaFolders</DisplayName>
-    <Description>SSMS Schema Folders</Description>
-  </Metadata>
-  <Installation>
-    <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[15.0]" />
-  </Installation>
-  <Dependencies>
-    <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
-  </Dependencies>
-  <Assets>
-    <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
-  </Assets>
+    <Metadata>
+        <Identity Id="SsmsSchemaFolders.a88a775f-7c86-4a09-b5a6-890c4c38261b" Version="1.7.1" Language="en-US" Publisher="Nicholas Ross" />
+        <DisplayName>SSMS Schema Folders</DisplayName>
+        <Description xml:space="preserve">Groups sql objects in Object Explorer (tables, views, etc.) into schema folders.</Description>
+        <MoreInfo>https://github.com/nicholas-ross/SSMS-Schema-Folders</MoreInfo>
+    </Metadata>
+    <Installation>
+        <InstallationTarget Version="[21.0,23.0)" Id="Microsoft.VisualStudio.Ssms">
+            <ProductArchitecture>amd64</ProductArchitecture>
+        </InstallationTarget>
+        <InstallationTarget Version="[15.0,21.0)" Id="Microsoft.VisualStudio.Ssms">
+            <ProductArchitecture>x86</ProductArchitecture>
+        </InstallationTarget>
+    </Installation>
+    <Dependencies>
+        <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
+    </Dependencies>
+    <Assets>
+    </Assets>
+    <Prerequisites>
+        <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[15.0,)" DisplayName="Visual Studio core editor" />
+    </Prerequisites>
 </PackageManifest>

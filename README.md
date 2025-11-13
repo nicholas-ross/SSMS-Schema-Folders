@@ -9,14 +9,26 @@ Source code, documentation and issues can be found at <https://github.com/nichol
 
 This is a fork of [SSMS2012Extender](https://github.com/NotExperiencedDev/SSMSExtension) (from when it was on CodePlex) that adds support for later SSMS versions.
 
-You can download the latest version of SSMS for free from [Microsoft](https://learn.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms).
+You can download the latest version of SSMS for free from [Microsoft](https://learn.microsoft.com/en-us/ssms/install/install).
 
 
 ## Install
 
-### SSMS 18 and above
+### SSMS 21, 22
 
-[Download the latest release from the releases page.](https://github.com/nicholas-ross/SSMS-Schema-Folders/releases)
+[Download the .vsix file from the releases page.](https://github.com/nicholas-ross/SSMS-Schema-Folders/releases)
+
+If you have installed a previous version using the zip file then delete the installed `SSMS Schema Folders` folder before continuing.
+
+Run the .vsix file to start the VSIX Installer. It will detect which versions of SSMS the extension can be installed to or updated to for the current user.
+
+If the installer does not start then right click the vsix file and `Open with > Microsoft Visual Studio Version Selector`.
+
+This will install into a random folder name in `%LocalAppData%\Microsoft\SSMS\<version_id>\Extensions`, where <version_id> is like 22.0_8a60b991. To uninstall, delete the correct folder and an empty file named `extensions.configurationchanged`.
+
+### SSMS 18, 19, 20, 21
+
+[Download the .zip file from the releases page.](https://github.com/nicholas-ross/SSMS-Schema-Folders/releases)
 
 You must unblock the zip file before extracting. Right click on the zip file in Windows Explorer and select Properties. 
 If you see an `Unblock` button or checkbox then click it. 
@@ -29,7 +41,6 @@ SSMS allows installing in a different location. The default paths are listed bel
 * 19 - `C:\Program Files (x86)\Microsoft SQL Server Management Studio 19\Common7\IDE\Extensions`
 * 20 - `C:\Program Files (x86)\Microsoft SQL Server Management Studio 20\Common7\IDE\Extensions`
 * 21 - `C:\Program Files\Microsoft SQL Server Management Studio 21\Release\Common7\IDE\Extensions`
-* 22 - `C:\Program Files\Microsoft SQL Server Management Studio 22\Preview\Common7\IDE\Extensions`
 
 ### SSMS 2012, 2014, 2016, 17
 
