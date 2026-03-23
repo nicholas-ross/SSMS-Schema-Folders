@@ -189,6 +189,7 @@ namespace SsmsSchemaFolders
                             case "Server/Database/SystemStoredProceduresFolder":
                             case "Server/Database/Table-valuedFunctionsFolder":
                             case "Server/Database/Scalar-valuedFunctionsFolder":
+                            case "Server/Database/UserDefinedTableTypesFolder":
                                 //node.TreeView.Cursor = Cursors.WaitCursor;
                                 var schemaFolderCount = _objectExplorerExtender.ReorganizeNodes(node, SchemaFolderNodeTag, expanding);
                                 if (expanding && schemaFolderCount == 1)
